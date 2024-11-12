@@ -1,7 +1,7 @@
 let modInfo = {
 	name: "定义 熵 tree",
 	id: "the entropy tree",
-	author: "nobody",
+	author: "xiaosunmath",
 	pointsName: "熵",
 	modFiles: ["layers.js", "tree.js"],
 
@@ -13,18 +13,25 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "1.1",
+	name: "i'm red-temperature",
 }
 
 let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v1.1</h3><br>
+		-Added a buyable.
+		-Added a upgrade.
+	<h3>v1.0</h3><br>
+	    -Added a layer.<br>
+	<h3>v0.1</h3><br>
+	    -Added three upgrades.<br>
 	<h3>v0.0</h3><br>
 		- Added a layer.<br>
 		- Added three upgrades.<br>`
 
-let winText = `恭喜！你>暂时<通关了！`
+let winText = `如果你在非加载界面看到了这条消息，那么你就是个挂壁！`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -47,8 +54,10 @@ function getPointGen() {
 	let gain = new Decimal(1)
 	if(hasUpgrade("p",11)) gain = gain.mul(upgradeEffect("p",11))
 	if(hasUpgrade("p",13)) gain = gain.mul(upgradeEffect("p",13))
-	if(gain > 1e100) gain = gain.sub(1e100).root(2).add(1e100)
-	if(gain > 1e500) gain = gain.sub(1e500).root(2).add(1e500)
+	if(hasUpgrade("p",21)) gain = gain.mul(2)
+	
+	if(hasUpgrade("c",11)) gain = gain.mul(upgradeEffect("c",11))
+	//gain = gain.mul(player.c.points.add(1).pow(2))
 	return gain
 }
 
@@ -62,7 +71,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("F1.79e308"))
+	return player.points.gte(new Decimal("1.79e3086365"))
 }
 
 
