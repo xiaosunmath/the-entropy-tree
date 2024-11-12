@@ -21,8 +21,8 @@ let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h3>Changelog:</h3><br>
 	<h3>v1.1</h3><br>
-		-Added a buyable.
-		-Added a upgrade.
+		-Added a buyable.<br>
+		-Added a upgrade.<br>
 	<h3>v1.0</h3><br>
 	    -Added a layer.<br>
 	<h3>v0.1</h3><br>
