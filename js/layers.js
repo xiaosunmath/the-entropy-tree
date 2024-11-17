@@ -118,7 +118,7 @@ addLayer("c", {
             effect(){
                 effe = player.c.points.add(1).pow(1.2)
                 if(hasUpgrade("c",13)) effe = effe.pow(2)
-                if(eff > 1e15) effe = effe.div(1e15).root(5).mul(1e15)
+                if(effe > 1e15) effe = effe.div(1e15).root(5).mul(1e15)
                 return effe
             },
         },
