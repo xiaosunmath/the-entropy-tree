@@ -105,6 +105,7 @@ addLayer("c", {
     },
     update(diff){
         if(hasMilestone("c",1)) layers.c.buyables[11].buyMax()
+        if(hasMilestone("c",2)) layers.c.buyables[12].buyMax()
     },
     upgrades: {
         11: {
@@ -132,6 +133,17 @@ addLayer("c", {
             description(){return "增加我不会起名字了效果/骷髅<br>"},
             cost: new Decimal(1e17),
         },
+        14: {
+            title:"14",
+            description(){return "星系的数量被生命乘亿下<br>"},
+            cost: new Decimal(1e27),
+        },
+        /*15: {
+            title:"15",
+            description(){return "熵数量x1e10<br>"},
+            cost: new Decimal(1e80),
+            effect(){return 1e10}
+        },*/
     },
     milestones: {
         0: {
@@ -144,13 +156,23 @@ addLayer("c", {
             effectDescription: "自动购买最大星系并且购买星系不消耗天体",
             done() { return player.c.points.gte(1e12) }
         },
+        2: {
+            requirementDescription: "1e36天体",
+            effectDescription: "自动购买最大生命并且购买生命不消耗天体",
+            done() { return player.c.points.gte(1e36) }
+        },
     },
     buyables: {
         11: {
             title: "星系",
             cost(x) { return new Decimal(10).mul(x.add(1).pow(3)) },
-            display() { return "增加天体获得<br>当前：x" + format(buyableEffect("c",11)) +
-                 "<br>价格：" + format(this.cost()) + "<br>数量：" + getBuyableAmount("c",11)},
+            display() { 
+                disp = "增加熵获得<br>当前：x" + format(buyableEffect("c",11))
+                if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
+                disp = disp + "<br>价格：" + format(this.cost()) + "<br>数量：" + format(getBuyableAmount("c",11))
+                if(hasUpgrade("c",14)) disp = disp + "x" + format(getBuyableAmount("c",12))
+                return disp
+            },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
@@ -163,15 +185,22 @@ addLayer("c", {
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
             },
             effect(){
-                if(hasUpgrade("c",12)) return getBuyableAmount("c",11).add(1).pow(1.2)
-                return getBuyableAmount("c",11).add(1)
+                effe = getBuyableAmount("c",11).add(1)
+                if(hasUpgrade("c",14)) effe = effe.mul(getBuyableAmount("c",12))
+                if(hasUpgrade("c",12)) effe = effe.pow(1.2)
+                if(effe > 1e30) effe = effe.div(1e30).log(2).pow(5).mul(1e30)
+                return effe
             },
         },
         12: {
             title: "生命",
             cost(x) { return new Decimal(1e15).mul(x.add(1).pow(4)) },
-            display() { return "增加熵获得<br>当前：x" + format(buyableEffect("c",12)) +
-                 "<br>价格：" + format(this.cost()) + "<br>数量：" + getBuyableAmount("c",12)},
+            display() { 
+                disp = "增加熵获得<br>当前：x" + format(buyableEffect("c",12))
+                if(buyableEffect("c",12) > 1e50) disp = disp + "（受nb的软上限限制）"
+                disp = disp + "<br>价格：" + format(this.cost()) + "<br>数量：" + format(getBuyableAmount("c",12))
+                return disp
+            },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
@@ -184,8 +213,9 @@ addLayer("c", {
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
             },
             effect(){
-                //if(hasUpgrade("c",12)) return getBuyableAmount("c",11).add(1).pow(1.2)
-                return getBuyableAmount("c",12).add(1).pow(5)
+                effe = getBuyableAmount("c",12).add(1).pow(5)
+                if(effe > 1e50) effe = effe.div(1e50).log(2).pow(5).mul(1e50)
+                return effe
             },
         },
     },

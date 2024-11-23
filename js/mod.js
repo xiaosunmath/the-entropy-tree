@@ -13,19 +13,24 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.2",
-	name: "i'm red-temperature<br>a big shit",
+	num: "0.1.3",
+	name: "i'm red/orange/yellow/green/cyan/blue/purple-temperature",
 }
 
 let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
+	<h1>如果发现更新后卡死了，说明作者又加了软上限以平衡<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v0.1.3</h3><br>
+		-Added a upgrade.<br>
+		-Added a milestone.<br>
 	<h3>v0.1.2</h3><br>
 		-Added a buyable.<br>
 		-Added a upgrade.<br>
 	<h3>v0.1.1</h3><br>
 		-Added a buyable.<br>
 		-Added two upgrades.<br>
+		-Added two milestones.<br>
 	<h3>v0.1</h3><br>
 	    -Added a layer.<br>
 	<h3>v0.0.1</h3><br>
@@ -61,6 +66,7 @@ function getPointGen() {
 	
 	if(hasUpgrade("c",11)) gain = gain.mul(upgradeEffect("c",11))
 	gain = gain.mul(buyableEffect("c",12))
+	//if(hasUpgrade("c",15)) gain = gain.mul(upgradeEffect("c",15))
 	//gain = gain.mul(player.c.points.add(1).pow(2))
 	return gain
 }
@@ -75,7 +81,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e40"))
+	return player.points.gte(new Decimal("1e130"))
 }
 
 
