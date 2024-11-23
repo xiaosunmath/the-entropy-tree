@@ -1,4 +1,3 @@
-
 addLayer("p", {
     name: "粒子", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "p", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -17,6 +16,7 @@ addLayer("p", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if(hasUpgrade("p",12)) mult = mult.mul(upgradeEffect("p",12))
+        if(hasUpgrade("u",11)) mult = mult.mul(10)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -97,6 +97,7 @@ addLayer("c", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         mult = mult.mul(buyableEffect("c",11))
+        if(hasUpgrade("u",11)) mult = mult.mul(10)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -229,6 +230,68 @@ addLayer("c", {
     ],
     layerShown(){
         if(hasUpgrade("p",23)) return true
+        if(player.u.points > 0) return true
+        else return false
+    }
+})
+addLayer("u", {
+    name: "被核弹炸死的宇宙", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "u", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+    }},
+    color: "#999999",
+    requires: new Decimal(1e120), // Can be a function that takes requirement increases into account
+    resource: "被核弹炸死的宇宙", // Name of prestige currency
+    baseResource: "熵", // Name of resource prestige is based on
+    baseAmount() {return player.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.004, // Prestige currency exponent
+    
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        exp = new Decimal(1)
+        
+        return exp
+    },
+    upgrades: {
+        11: {
+            title:"描述描述你的宇宙被毁灭了",
+            description(){return "你的宇宙被10^1145141919810个核弹炸死了，并且被10^9*10^15反物质炸的死的不能再死了，而且被K9e15攻击的恐怖鳗鱼打成了傻逼。所以宇宙要进行复仇，使你的熵，粒子，天体数量x10,并且使你的熵^1.02<br>"},
+            cost: new Decimal(0),
+            unlocked(){
+                if(player.u.points > 0) return true
+                else return false
+            }
+        },
+        12: {
+            title:"你的宇宙觉得自己屌爆了",
+            description(){return "核爆你的游戏(记得存档)<br>"},
+            cost: new Decimal(0),
+            unlocked(){
+                if(player.u.points > 2) return true
+                else return false
+            }
+        },
+    },
+    passiveGeneration(){
+        //if(hasMilestone("c",0)) return 1
+        //else return 0
+    },
+    row: 1, // Row the layer is in on the tree (0 is the first row)
+    
+    hotkeys: [
+        {key: "u", description: "U: 进行宇宙被核弹炸死重置", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){
+        if(player.u.points > 0) return true
+        if(hasUpgrade("c",14)) return true
         else return false
     }
 })

@@ -13,14 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.3",
-	name: "i'm red/orange/yellow/green/cyan/blue/purple-temperature",
+	num: "0.2",
+	name: "the universe is red/orange/yellow/green/cyan/blue/purple-temperature",
 }
 
 let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h1>如果发现更新后卡死了，说明作者又加了软上限以平衡<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v0.2</h3><br>
+		-Added a layer.<br>
+		-Added a upgrade.<br>
+		-Added a sb upgrade.<br>
 	<h3>v0.1.3</h3><br>
 		-Added a upgrade.<br>
 		-Added a milestone.<br>
@@ -63,11 +67,12 @@ function getPointGen() {
 	if(hasUpgrade("p",11)) gain = gain.mul(upgradeEffect("p",11))
 	if(hasUpgrade("p",13)) gain = gain.mul(upgradeEffect("p",13))
 	if(hasUpgrade("p",21)) gain = gain.mul(2)
-	
 	if(hasUpgrade("c",11)) gain = gain.mul(upgradeEffect("c",11))
 	gain = gain.mul(buyableEffect("c",12))
-	//if(hasUpgrade("c",15)) gain = gain.mul(upgradeEffect("c",15))
-	//gain = gain.mul(player.c.points.add(1).pow(2))
+	if(hasUpgrade("u",11)) gain = gain.mul(10)
+
+	if(hasUpgrade("u",11)) gain = gain.pow(1.02)
+	if(hasUpgrade("u",12)) gain = gain.pow(gain)
 	return gain
 }
 
@@ -81,7 +86,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e130"))
+	return player.points.gte(new Decimal("(e^308)100"))
 }
 
 
