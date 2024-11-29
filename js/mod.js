@@ -13,14 +13,19 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2",
-	name: "the universe is red/orange/yellow/green/cyan/blue/purple-temperature",
+	num: "0.2.1",
+	name: "the universe is stronger and stronger",
 }
 
 let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h1>如果发现更新后卡死了，说明作者又加了软上限以平衡<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v0.2.1</h3><br>
+		-我懒的用英文了。(I don't want to use English.)<br>
+		-添加4个升级。<br>
+		-删除"sb"升级。<br>
+		-添加1个挑战。<br>
 	<h3>v0.2</h3><br>
 		-Added a layer.<br>
 		-Added a upgrade.<br>
@@ -66,13 +71,15 @@ function getPointGen() {
 	let gain = new Decimal(1)
 	if(hasUpgrade("p",11)) gain = gain.mul(upgradeEffect("p",11))
 	if(hasUpgrade("p",13)) gain = gain.mul(upgradeEffect("p",13))
-	if(hasUpgrade("p",21)) gain = gain.mul(2)
+	if(hasUpgrade("p",21)) gain = gain.mul(3)
 	if(hasUpgrade("c",11)) gain = gain.mul(upgradeEffect("c",11))
 	gain = gain.mul(buyableEffect("c",12))
 	if(hasUpgrade("u",11)) gain = gain.mul(10)
 
 	if(hasUpgrade("u",11)) gain = gain.pow(1.02)
-	if(hasUpgrade("u",12)) gain = gain.pow(gain)
+	if(hasUpgrade("u",12)) gain = gain.pow(1.1)
+	if(inChallenge("u",11)) gain = gain.pow(0.5)
+	if(hasChallenge("u",11)) gain = gain.pow(1.4514)
 	return gain
 }
 
@@ -86,7 +93,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("(e^308)100"))
+	return player.points.gte(new Decimal("1e380"))
 }
 
 

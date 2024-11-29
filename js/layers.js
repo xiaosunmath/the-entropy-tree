@@ -22,14 +22,16 @@ addLayer("p", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         exp = new Decimal(1)
         if(hasUpgrade("p",23)) exp = exp.add(0.2)
+        if(hasUpgrade("u",13)) exp = exp.add(0.1)
+        if(hasUpgrade("u",15)) exp = exp.add(0.2)
         return exp
     },
     upgrades: {
         11: {
-            title:"倍增熵",
+            title:"描述描述描述",
             description(){
                 disp = "基于粒子增加熵获得<br>当前：x" + format(upgradeEffect("p",11))
-                if(upgradeEffect("p",11) > 1e8) disp += "<br>(受软上限限制)"
+                if(upgradeEffect("p",11) > 1e8) disp += "<br>(软上限)"
                 return disp
             },
             cost: new Decimal(1),
@@ -40,30 +42,30 @@ addLayer("p", {
             },
         },
         12: {
-            title:"倍增粒子",
-            description(){return "基于熵增加粒子获得<br>当前：x" + format(upgradeEffect("p",12))},
+            title:"炸弹炸弹炸弹",
+            description(){return "你的宇宙被核弹入侵了，基于熵增加粒子获得<br>当前：x" + format(upgradeEffect("p",12))},
             cost: new Decimal(5),
             effect(){return player.points.add(5).log(5)},
         },
         13: {
-            title:"自加倍",
-            description(){return "基于熵增加熵获得<br>当前：x" + format(upgradeEffect("p",13))},
+            title:"核弹你的宇宙",
+            description(){return "核弹正在暴走，把宇宙打成了大便，基于熵增加熵获得<br>当前：x" + format(upgradeEffect("p",13))},
             cost: new Decimal(10),
             effect(){return player.points.add(2).log(2)},
         },
         21: {
-            title:"复制",
-            description(){return "基于粒子增加粒子乘数<br>当前：x" + format(upgradeEffect("p",21))},
+            title:"反物质反物质反物质反物质反物质",
+            description(){return "反物质开始爆炸，基于粒子增加粒子乘数<br>当前：x" + format(upgradeEffect("p",21))},
             cost: new Decimal(50),
             effect(){return player.p.points.add(10).log(10)},
         },
         22: {
-            title:"IQ=-1",
-            description(){return "熵获取×2<br>"},
+            title:"核弹使用了进化，变成了氢弹",
+            description(){return "熵获取×3<br>"},
             cost: new Decimal(100),
         },
         23: {
-            title:"IQ=-250",
+            title:"反物质打破了无限，超越了e1000",
             description(){return "粒子获取指数+0.2<br>"},
             cost: new Decimal(200),
         },
@@ -102,6 +104,8 @@ addLayer("c", {
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         exp = new Decimal(1)
+        if(hasUpgrade("u",13)) exp = exp.add(0.1)
+        if(hasUpgrade("u",15)) exp = exp.add(0.2)
         return exp
     },
     update(diff){
@@ -110,9 +114,9 @@ addLayer("c", {
     },
     upgrades: {
         11: {
-            title:"我不会起名字了",
+            title:"宇宙宇宙宇宙",
             description(){
-                disp = "基于天体增加熵乘数<br>当前：x" + format(upgradeEffect("c",11))
+                disp = "反物质开始复制器，引力开启了挂壁模式，所以有天体。基于天体增加熵乘数<br>当前：x" + format(upgradeEffect("c",11))
                 if(upgradeEffect("c",11) > 1e15) disp += "<br>(受软上限限制)"
                 return disp
             },
@@ -125,18 +129,18 @@ addLayer("c", {
             },
         },
         12: {
-            title:"我不会起名字了可购买",
-            description(){return "增加星系效果/骷髅<br>"},
+            title:"反物质开始永恒，超过了e100000",
+            description(){return "增加第一个可购买效果/骷髅<br>"},
             cost: new Decimal(10000),
         },
         13: {
-            title:"13",
+            title:"氢弹进行了进化，变成了5阶核弹",
             description(){return "增加我不会起名字了效果/骷髅<br>"},
             cost: new Decimal(1e17),
         },
         14: {
-            title:"14",
-            description(){return "星系的数量被生命乘亿下<br>"},
+            title:"这是一个膨胀，因为反物质在光暗树膨胀期",
+            description(){return "第一个可购买的数量被第二个可购买乘亿下<br>"},
             cost: new Decimal(1e27),
         },
         /*15: {
@@ -159,7 +163,7 @@ addLayer("c", {
         },
         2: {
             requirementDescription: "1e36天体",
-            effectDescription: "自动购买最大生命并且购买生命不消耗天体",
+            effectDescription: "自动购买最大生命并且购买生命不消耗天体<br>哦不，核弹已经进化到114514阶了，并且反物质也进入了毁灭现实",
             done() { return player.c.points.gte(1e36) }
         },
     },
@@ -260,10 +264,18 @@ addLayer("u", {
         
         return exp
     },
+    tabFormat: {
+        "noodles(Main)": {
+            content: [ ["infobox","introBox"],"main-display","prestige-button","upgrades"],},
+        "the page makes people died(Challeges)": {
+            content: [ ["infobox","introBox"],"main-display","challenges"],
+            unlocked(){return hasUpgrade('u',14)}
+        },
+    },
     upgrades: {
         11: {
             title:"描述描述你的宇宙被毁灭了",
-            description(){return "你的宇宙被10^1145141919810个核弹炸死了，并且被10^9*10^15反物质炸的死的不能再死了，而且被K9e15攻击的恐怖鳗鱼打成了傻逼。所以宇宙要进行复仇，使你的熵，粒子，天体数量x10,并且使你的熵^1.02<br>"},
+            description(){return "你的宇宙被10^1145141919810个核弹炸死了，并且被10^9*10^15反物质炸的死的不能再死了，而且被K9e15攻击的恐怖鳗鱼打成了傻逼。所以宇宙要进行复仇，使你的熵，粒子，天体数量x10,并且使你的熵^1.02(下一个升级在3被核弹炸死的宇宙)<br>"},
             cost: new Decimal(0),
             unlocked(){
                 if(player.u.points > 0) return true
@@ -272,12 +284,48 @@ addLayer("u", {
         },
         12: {
             title:"你的宇宙觉得自己屌爆了",
-            description(){return "核爆你的游戏(记得存档)<br>"},
+            description(){return "宇宙被作者制裁了，所以只能让你的熵^1.1(下一个升级在10被核弹炸死的宇宙)<br>"},
             cost: new Decimal(0),
             unlocked(){
                 if(player.u.points > 2) return true
                 else return false
             }
+        },
+        13: {
+            title:"QoL:世界遗忘我",
+            description(){return "你的宇宙觉得还是太慢了，于是粒子和天体的指数+0.1(下一个20)<br>"},
+            cost: new Decimal(0),
+            unlocked(){
+                if(player.u.points > 9) return true
+                else return false
+            }
+        },
+        14: {
+            title:"宇宙决定气炸玩家",
+            description(){return "解锁挑战(下一个30)<br>"},
+            cost: new Decimal(0),
+            unlocked(){
+                if(player.u.points > 19) return true
+                else return false
+            }
+        },
+        15: {
+            title:"宇宙认为你太nb了",
+            description(){return "使粒子和天体的指数+0.2(endgame)<br>"},
+            cost: new Decimal(0),
+            unlocked(){
+                if(player.u.points > 29) return true
+                else return false
+            }
+        },
+    },
+    challenges: {
+        11: {
+            name: "宇宙太膨胀了，作者压制一下",
+            challengeDescription: "宇宙：什么智障玩意，给你一个^0.5",
+            goalDescription: "目标：e1145141919810/e1145141919794熵",
+            canComplete: function() {return player.points.gte(1e16)},
+            rewardDescription: "作者炸了，使你的熵获取^1.4514"
         },
     },
     passiveGeneration(){
