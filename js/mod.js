@@ -13,14 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2.1",
-	name: "the universe is stronger and stronger",
+	num: "0.2.2",
+	name: "the universe is die angin",
 }
 
 let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h1>如果发现更新后卡死了，说明作者又加了软上限以平衡<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v0.2.2</h3><br>
+		-添加2个升级
+		-添加一个挑战
+		-添加2个可购买
 	<h3>v0.2.1</h3><br>
 		-我懒的用英文了。(I don't want to use English.)<br>
 		-添加4个升级。<br>
