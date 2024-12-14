@@ -13,18 +13,23 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2.2",
-	name: "the universe is die angin",
+	num: "0.2.3",
+	name: "byd残局终于是一个好看亿点的数字了",
 }
 
 let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h1>如果发现更新后卡死了，说明作者又加了软上限以平衡<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v0.2.3</h3><br>
+		-添加6个升级<br>
+		-添加1个挑战<br>
+		-添加一个可购买<br>
+		-endgame 1e700熵<br>
 	<h3>v0.2.2</h3><br>
-		-添加2个升级
-		-添加一个挑战
-		-添加2个可购买
+		-添加2个升级<br>
+		-添加一个挑战<br>
+		-添加2个可购买<br>
 	<h3>v0.2.1</h3><br>
 		-我懒的用英文了。(I don't want to use English.)<br>
 		-添加4个升级。<br>
@@ -79,13 +84,14 @@ function getPointGen() {
 	if(hasUpgrade("c",11)) gain = gain.mul(upgradeEffect("c",11))
 	gain = gain.mul(buyableEffect("c",12))
 	if(hasUpgrade("u",11)) gain = gain.mul(10)
-	if(hasUpgrade("u",23)) gain = gain.mul(1e20)
+	//if(hasUpgrade("u",23)) gain = gain.mul(1e20)
 
 	if(hasUpgrade("u",11)) gain = gain.pow(1.02)
 	if(hasUpgrade("u",12)) gain = gain.pow(1.1)
 	if(hasUpgrade("u",21)) gain = gain.pow(upgradeEffect("u",21))
 	if(inChallenge("u",11)) gain = gain.pow(0.5)
 	if(hasChallenge("u",11)) gain = gain.pow(1.4514)
+	if(inChallenge("u",13)) gain = gain.pow(0.25)
 	return gain
 }
 
@@ -99,7 +105,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e517"))
+	return player.points.gte(new Decimal("1e700"))
 }
 
 
