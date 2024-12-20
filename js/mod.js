@@ -13,14 +13,19 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2.3",
-	name: "byd残局终于是一个好看亿点的数字了",
+	num: "0.2.4",
+	name: "气死了，第三个层级重新平衡了一遍",
 }
 
 let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h1>如果发现更新后卡死了，说明作者又加了软上限以平衡<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v0.2.4</h3><br>
+		-添加5个升级<br>
+		-创死了几个升级<br>
+		-添加一个可购买<br>
+		-删掉一个可购买<br>
 	<h3>v0.2.3</h3><br>
 		-添加6个升级<br>
 		-添加1个挑战<br>
@@ -105,7 +110,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e700"))
+	return player.points.gte(new Decimal("1e935"))
 }
 
 

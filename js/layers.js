@@ -14,7 +14,7 @@ addLayer("p", {
     type: "normal",
     exponent: 0.5,
     gainMult() {
-        mult = new Decimal(1)
+        mult = new Decimal(114514)
         if(hasUpgrade("p",12)) mult = mult.mul(upgradeEffect("p",12))
         if(hasUpgrade("u",11)) mult = mult.mul(10)
         return mult
@@ -201,7 +201,7 @@ addLayer("c", {
             title: "生命",
             cost(x) { return new Decimal(1e15).mul(x.add(1).pow(4)) },
             display() { 
-                disp = "增加熵获得<br>当前：x" + format(buyableEffect("c",12))
+                let disp = "增加熵获得<br>当前：x" + format(buyableEffect("c",12))
                 if(buyableEffect("c",12) > 1e50) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost()) + "<br>数量：" + format(getBuyableAmount("c",12))
                 return disp
@@ -259,7 +259,9 @@ addLayer("u", {
         if(hasChallenge("u",12)) gain = gain.add(1)
         if(hasUpgrade("u",24)) gain = gain.mul(upgradeEffect("u",24))
         gain = gain.mul(buyableEffect("u",11))
-        gain = gain.pow(buyableEffect("u",12))
+        gain = gain.mul(buyableEffect("u",12))
+        gain = gain.mul(buyableEffect("u",13))
+        if(hasUpgrade("u",34)) gain = gain.mul(upgradeEffect("u",34))
         return gain
     },
     update(diff){
@@ -273,6 +275,9 @@ addLayer("u", {
     gainExp() {
         exp = new Decimal(1)
         if(hasChallenge("u",21)) exp = exp.add(challengeEffect("u",21))
+        if(hasUpgrade("u",31)) exp = exp.add(upgradeEffect("u",31))
+        if(hasUpgrade("u",32)) exp = exp.add(upgradeEffect("u",32))
+        if(hasUpgrade("u",33)) exp = exp.add(upgradeEffect("u",33))
         return exp
     },
     tabFormat: {
@@ -342,7 +347,9 @@ addLayer("u", {
             description(){return "使你的被核弹炸死的宇宙将熵提高<br>当前效果：^" + format(upgradeEffect("u",21))},
             cost: new Decimal(0),
             effect(){
-                return player.u.points.log(10).div(10).add(1)
+                let effe = player.u.points.log(10).div(10).add(1)
+                if(effe.sub(2) > 0) return effe.sub(1).log(10).add(2)
+                return effe
             },
             unlocked(){
                 if(player.u.points > 49) return true
@@ -361,7 +368,7 @@ addLayer("u", {
         23: {
             title:"宇宙的智商跌破-250^2",
             description(){return "让宇宙IQ倍减价格基数-1"},
-            cost: new Decimal(2e23),currencyDisplayName:"傻逼宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
+            cost: new Decimal(2e7),currencyDisplayName:"傻逼宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
             unlocked(){
                 if(hasChallenge("u",12)) return true
                 else return false
@@ -369,8 +376,8 @@ addLayer("u", {
         },
         24: {
             title:"傻逼宇宙协同",
-            description(){return "基于你的被核弹炸死的宇宙增加傻逼宇宙力量获取(恐怖指数之前)<br>当前:x" + format(upgradeEffect("u",24))},
-            cost: new Decimal(1e38),currencyDisplayName:"傻逼宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
+            description(){return "基于你的被核弹炸死的宇宙增加傻逼宇宙力量获取<br>当前:x" + format(upgradeEffect("u",24))},
+            cost: new Decimal(5e16),currencyDisplayName:"傻逼宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
             effect(){
                 return player.u.points.add(1).log(2).pow(2)
             },
@@ -382,45 +389,75 @@ addLayer("u", {
         25: {
             title:"作者这个傻逼终于按QoL了，不得给多亿点",
             description(){return "每秒获得10000%的被核弹炸死的宇宙"},
-            cost: new Decimal(1e50),currencyDisplayName:"傻逼宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
+            cost: new Decimal(1e27),currencyDisplayName:"傻逼宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
             unlocked(){
                 if(hasUpgrade("u",24)) return true
                 else return false
             },
         },
         26: {
-            title:"故意找茬",
+            title:"r",
             description(){return "解锁挑战3"},
-            cost: new Decimal(1000000),
+            cost: new Decimal(100000),
             unlocked(){
                 if(hasUpgrade("u",25)) return true
                 else return false
             },
         },
-        27: {
-            title:"故意找茬",
-            description(){return "上一个升级是假的 解锁挑战3"},
-            cost: new Decimal(1000000),
+        31: {
+            title:"粒子宇宙",
+            description(){return "基于粒子数量增加被核弹炸死的宇宙的指数<br>当前：+" + format(upgradeEffect("u",31))},
+            cost: new Decimal(1e8),
+            effect(){
+                return player.p.points.add(1).log(10).root(2).div(30)
+            },
             unlocked(){
-                if(hasUpgrade("u",26)) return true
+                if(hasChallenge("u",21)) return true
                 else return false
             },
         },
-        28: {
-            title:"故意找茬",
-            description(){return "还是假的/笑 解锁挑战3"},
-            cost: new Decimal(1000000),
+        32: {
+            title:"天体宇宙",
+            description(){return "基于天体数量增加被核弹炸死的宇宙的指数<br>当前：+" + format(upgradeEffect("u",32))},
+            cost: new Decimal(1e12),
+            effect(){
+                return player.c.points.add(1).log(10).root(2).div(30)
+            },
             unlocked(){
-                if(hasUpgrade("u",27)) return true
+                if(hasUpgrade("u",31)) return true
                 else return false
             },
         },
-        29: {
-            title:"不玩了不玩了",
-            description(){return "解锁挑战3（真的』"},
-            cost: new Decimal(1000000),
+        33: {
+            title:"宇宙自增",
+            description(){return "基于被核弹炸死的宇宙数量增加被核弹炸死的宇宙的指数<br>当前：+" + format(upgradeEffect("u",33))},
+            cost: new Decimal(1e15),
+            effect(){
+                return player.u.points.add(1).log(10).root(3).div(3)
+            },
             unlocked(){
-                if(hasUpgrade("u",28)) return true
+                if(hasUpgrade("u",32)) return true
+                else return false
+            },
+        },
+        34: {
+            title:"傻逼宇宙力量倍增",
+            description(){return "基于被核弹炸死的宇宙数量乘以傻逼宇宙力量<br>当前：×" + format(upgradeEffect("u",34))},
+            cost: new Decimal(1e18),
+            effect(){
+                return player.u.points.root(3)
+            },
+            unlocked(){
+                if(hasUpgrade("u",33)) return true
+                else return false
+            },
+        },
+        35: {
+            title:"傻逼之力量",
+            description(){return "解锁一个新的可购买"},
+            cost: new Decimal(1e23),
+            unlocked(){
+                if(hasUpgrade("u",34)) return true
                 else return false
             },
         },
@@ -439,13 +476,17 @@ addLayer("u", {
             title: "宇宙IQ倍减",
             cost(x) { 
                 let bas = new Decimal(10)
+                let scal1 = new Decimal(2)
                 if(hasUpgrade("u",23)) bas = bas.sub(1)
+                if(getBuyableAmount("u",11).sub(300) > 0) x = x.sub(300).pow(scal1).add(300)
                 return new Decimal(10).mul(bas.pow(x.pow(1.1)))
             },
             display() { 
                 let disp = "增加傻逼宇宙力量获得<br>当前：x" + format(buyableEffect("u",11))
                 //if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
-                disp = disp + "<br>价格：" + format(this.cost()) + "<br>数量：" + format(getBuyableAmount("u",11))
+                disp = disp + "<br>价格：" + format(this.cost())
+                if(getBuyableAmount("u",11).sub(300) > 0) disp = disp + "（折算）"
+                disp = disp + "<br>数量：" + format(getBuyableAmount("u",11))
                 //if(hasUpgrade("u",14)) disp = disp + "x" + format(getBuyableAmount("c",12))
                 return disp
             },
@@ -454,12 +495,12 @@ addLayer("u", {
                 player[this.layer].uni = player[this.layer].uni.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
-            buyMax() {
+            /*buyMax() {
                 if (!this.canAfford()) return;
                 let tempBuy = player.u.uni.max(1).div(10).log(10).root(1.1)
                 let target = tempBuy.plus(1).floor();
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
-            },
+            },*/
             effect(){
                 let baseeff = new Decimal(15)
                 let effe = baseeff.pow(getBuyableAmount("u",11))
@@ -467,15 +508,19 @@ addLayer("u", {
             },
         },
         12: {
-            title: "宇宙IQ指数下降",
+            title: "宇宙IQ自我倍减",
             cost(x) { 
-                let bas = new Decimal(100)
-                return new Decimal(1e13).mul(bas.pow(x.pow(10)))
+                let bas = new Decimal(10)
+                let scal1 = new Decimal(2)
+                if(getBuyableAmount("u",12).sub(300) > 0) x = x.sub(300).pow(scal1).add(300)
+                return new Decimal(1e33).mul(bas.pow(x.pow(1.05)))
             },
             display() { 
-                let disp = "增加傻逼宇宙力量获得<br>当前：^" + format(buyableEffect("u",12))
+                let disp = "基于傻逼宇宙力量增加傻逼宇宙力量获得<br>当前：x" + format(buyableEffect("u",12))
                 //if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
-                disp = disp + "<br>价格：" + format(this.cost()) + "<br>数量：" + format(getBuyableAmount("u",12))
+                disp = disp + "<br>价格：" + format(this.cost())
+                if(getBuyableAmount("u",12).sub(300) > 0) disp = disp + "（折算）"
+                disp = disp + "<br>数量：" + format(getBuyableAmount("u",12))
                 //if(hasUpgrade("u",14)) disp = disp + "x" + format(getBuyableAmount("c",12))
                 return disp
             },
@@ -484,29 +529,32 @@ addLayer("u", {
                 player[this.layer].uni = player[this.layer].uni.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
-            buyMax() {
+            /*buyMax() {
                 if (!this.canAfford()) return;
-                let tempBuy = player.u.uni.max(1).div(1e13).log(100).root(10)
+                let tempBuy = player.u.uni.max(1).div(10).log(10).root(1.05)
                 let target = tempBuy.plus(1).floor();
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
-            },
+            },*/
             effect(){
-                let baseeff = new Decimal(1.05)
+                let baseeff = new Decimal(player.u.uni.log(10).root(3))
                 let effe = baseeff.pow(getBuyableAmount("u",12))
                 return effe
             },
         },
         13: {
-            title: "宇宙IQ自我倍减",
+            title: "宇宙IQ炸死倍减",
             cost(x) { 
-                let bas = new Decimal(10)
-                //if(hasUpgrade("u",23)) bas = bas.sub(1)
-                return new Decimal(1e33).mul(bas.pow(x.pow(1.05)))
+                let bas = new Decimal(100)
+                //let scal1 = new Decimal(2)
+                //if(getBuyableAmount("u",12).sub(300) > 0) x = x.sub(300).pow(scal1).add(300)
+                return new Decimal("1e600").mul(bas.pow(x.pow(1.1)))
             },
             display() { 
-                let disp = "基于傻逼宇宙力量增加傻逼宇宙力量获得<br>当前：x" + format(buyableEffect("u",13))
+                let disp = "基于被核弹炸死的宇宙增加傻逼宇宙力量获得<br>当前：x" + format(buyableEffect("u",13))
                 //if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
-                disp = disp + "<br>价格：" + format(this.cost()) + "<br>数量：" + format(getBuyableAmount("u",13))
+                disp = disp + "<br>价格：" + format(this.cost())
+                //if(getBuyableAmount("u",12).sub(300) > 0) disp = disp + "（折算）"
+                disp = disp + "<br>数量：" + format(getBuyableAmount("u",13))
                 //if(hasUpgrade("u",14)) disp = disp + "x" + format(getBuyableAmount("c",12))
                 return disp
             },
@@ -515,17 +563,21 @@ addLayer("u", {
                 player[this.layer].uni = player[this.layer].uni.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
-            buyMax() {
+            /*buyMax() {
                 if (!this.canAfford()) return;
                 let tempBuy = player.u.uni.max(1).div(10).log(10).root(1.05)
                 let target = tempBuy.plus(1).floor();
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
-            },
+            },*/
             effect(){
-                let baseeff = new Decimal(player.u.uni.log(10).root(1.5))
+                let baseeff = new Decimal(player.u.points.log(10))
                 let effe = baseeff.pow(getBuyableAmount("u",13))
                 return effe
             },
+            unlocked(){
+                if(hasUpgrade("u",35)) return true
+                else return false
+            }
         },
     },
     
@@ -540,15 +592,19 @@ addLayer("u", {
         12: {
             name: "作者使用了更nb的力量压制宇宙",
             challengeDescription: "天体指数/5",
-            goalDescription: "目标：e52熵挂死你",
-            canComplete: function() {return player.points.gte(1e52)},
-            rewardDescription: "宇宙表示已老实求放过，解锁傻逼宇宙力量"
+            goalDescription: "目标：1e48熵",
+            canComplete: function() {return player.points.gte(1e48)},
+            rewardDescription: "宇宙表示已老实求放过，解锁傻逼宇宙力量",
+            unlocked(){
+                if(hasUpgrade("u",22)) return true
+                else return false
+            },
         },
         21: {
-            name: "玩家要红温了，救救玩家吧",
+            name: "只是一个挑战",
             challengeDescription: "熵^0.25,粒子指数/10",
-            goalDescription: "目标：999999999999999999999999999999999999999熵（不信可以自己数）",
-            canComplete: function() {return player.points.gte(1e40)},
+            goalDescription: "目标：9999999999999999999999999999999999熵（不信可以自己数）",
+            canComplete: function() {return player.points.gte(1e35)},
             rewardDescription() {
                 return "傻逼宇宙力量好像没用，让它加成一下被核弹炸死的宇宙的指数<br>当前：+" + format(challengeEffect("u",21))
             },
@@ -556,7 +612,7 @@ addLayer("u", {
                 return player.u.uni.log(10).root(2).div(10)
             },
             unlocked(){
-                if(hasUpgrade("u",29)) return true
+                if(hasUpgrade("u",26)) return true
                 else return false
             },
         },
