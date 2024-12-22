@@ -13,14 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2.4",
-	name: "气死了，第三个层级重新平衡了一遍",
+	num: "0.3.0",
+	name: "waht? player.e.ele.pow(50)?",
 }
 
 let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h1>如果发现更新后卡死了，说明作者又加了软上限以平衡<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v0.3</h3><br>
+		-添加一个新层级<br>
+		-添加一个升级<br>
 	<h3>v0.2.4</h3><br>
 		-添加5个升级<br>
 		-创死了几个升级<br>
@@ -97,6 +100,8 @@ function getPointGen() {
 	if(inChallenge("u",11)) gain = gain.pow(0.5)
 	if(hasChallenge("u",11)) gain = gain.pow(1.4514)
 	if(inChallenge("u",13)) gain = gain.pow(0.25)
+
+	gain = gain.mul(player.e.ele.add(1).pow(50))
 	return gain
 }
 
@@ -110,7 +115,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e935"))
+	return player.points.gte(new Decimal("1e1111"))
 }
 
 

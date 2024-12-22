@@ -1,4 +1,12 @@
 addLayer("p", {
+    infoboxes:{
+        introBox:{
+            title:"一个介绍",
+            body(){
+                return "哦，我的上帝啊<br>这是我的第一个作品，同时也会成为我的主线<br>如果在某些地方平衡和屎一样，请联系作者QQ3988009796<br>如果做的大粪，不要骂行吗qwq"
+            }
+        },
+    },
     name: "粒子",
     symbol: "p",
     position: 0,
@@ -14,7 +22,7 @@ addLayer("p", {
     type: "normal",
     exponent: 0.5,
     gainMult() {
-        mult = new Decimal(114514)
+        mult = new Decimal(1)
         if(hasUpgrade("p",12)) mult = mult.mul(upgradeEffect("p",12))
         if(hasUpgrade("u",11)) mult = mult.mul(10)
         return mult
@@ -85,6 +93,14 @@ addLayer("p", {
     layerShown(){return true}
 })
 addLayer("c", {
+    infoboxes:{
+        introBox:{
+            title:"请输入文本",
+            body(){
+                return "请输入文本请输入文本请输入文本请输入文本请输入文本请输入文本<br>"
+            },
+        },
+    },
     name: "天体",
     symbol: "c",
     position: 1,
@@ -239,6 +255,14 @@ addLayer("c", {
     }
 })
 addLayer("u", {
+    infoboxes:{
+        introBox:{
+            title:"宇宙",
+            body(){
+                return "哦，我的上帝啊<br>宇宙不小心热寂了"
+            }
+        },
+    },
     name: "被核弹炸死的宇宙",
     symbol: "u",
     position: 0,
@@ -255,7 +279,7 @@ addLayer("u", {
     type: "normal",
     exponent: 0.004,
     unigain(){
-        gain = new Decimal(0)
+        let gain = new Decimal(0)
         if(hasChallenge("u",12)) gain = gain.add(1)
         if(hasUpgrade("u",24)) gain = gain.mul(upgradeEffect("u",24))
         gain = gain.mul(buyableEffect("u",11))
@@ -630,4 +654,82 @@ addLayer("u", {
         if(hasUpgrade("c",14)) return true
         else return false
     }
+})
+addLayer("e", {
+    name: "元素合成器",
+    symbol: "e",
+    position: 1,
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        ele: new Decimal(0),
+    }},
+    color: "#DD55DD",
+    requires: new Decimal("1e525"),
+    resource: "元素合成器",
+    baseResource: "天体",
+    baseAmount() {return player.c.points},
+    type: "static",
+    exponent: 1,
+    gainMult() {
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() {
+        exp = new Decimal(0.02)
+        if(player.e.points.sub(5) > 0) exp = exp.sub(0.005)
+        return exp
+    },
+    elegain(){
+        let gain = player.e.points.pow(3).div(100)
+        if(hasUpgrade("e",11)) gain = gain.mul(upgradeEffect("e",11))
+        return gain
+    },
+    update(diff){
+        player.e.ele=player.e.ele.add(tmp.e.elegain.mul(diff))
+    },
+    tabFormat: {
+        "主界面": {
+            content: [ ["infobox","introBox"],"main-display","prestige-button",
+            ["display-text",
+                function() {return '你有' + format(player.e.ele) + '超重元素,增益熵获取×' + format(player.e.ele.add(1).pow(50)) + '（在指数之后）'},
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+               "upgrades"],},
+    },
+    upgrades: {
+        11: {
+            title:"效率",
+            description(){return "基于你的被核弹炸死的宇宙增加超重元素获取<br>当前:x" + format(upgradeEffect("e",11))},
+            cost: new Decimal(30),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            effect(){
+                return player.u.points.add(1).log(10).root(3)
+            },
+            unlocked(){
+                if(player.e.points.sub(1) >= 0) return true
+                else return false
+            },
+        },
+        12: {
+            title:"",
+            description(){return ""},
+            cost: new Decimal(1e1000),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            effect(){
+                return -1
+            },
+            unlocked(){
+                if(hasUpgrade("e",11)) return true
+                else return false
+            },
+        },
+    },
+    /*passiveGeneration(){
+        if(hasMilestone("c",0)) return 1
+        else return 0
+    },*/
+    row: 1,
+    
+    hotkeys: [
+        {key: "e", description: "E: 进行天体合成重置", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return true}
 })
