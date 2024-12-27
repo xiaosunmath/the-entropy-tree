@@ -13,14 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.0",
-	name: "waht? player.e.ele.pow(50)?",
+	num: "0.3.1煞笔版",
+	name: "how to nerf softcap",
 }
 
 let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h1>如果发现更新后卡死了，说明作者又加了软上限以平衡<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v0.3.1</h3><br>
+		-添加3个升级<br>
+		-添加一个里程碑<br>
 	<h3>v0.3</h3><br>
 		-添加一个新层级<br>
 		-添加一个升级<br>
@@ -115,7 +118,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e1111"))
+	return player.points.gte(new Decimal("1e1400"))
 }
 
 
