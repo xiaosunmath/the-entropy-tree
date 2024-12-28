@@ -13,14 +13,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.1煞笔版",
-	name: "how to nerf softcap",
+	num: "0.3.1.1",
+	name: "为什么恒星质量这么强",
 }
 
 let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h1>如果发现更新后卡死了，说明作者又加了软上限以平衡<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v0.3.1.1</h3><br>
+		-添加2个升级<br>
 	<h3>v0.3.1</h3><br>
 		-添加3个升级<br>
 		-添加一个里程碑<br>

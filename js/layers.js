@@ -84,10 +84,10 @@ addLayer("p", {
     doReset(resettingLayer){
         if(layers[resettingLayer].row > layers[this.layer].row){
             let kept = ["unlocked","auto"]
-            if(resettingLayer == "e"){
+            if(resettingLayer == "e" && hasMilestone("e",0)){
                 kept.push("upgrades")
             }
-            if(resettingLayer == "u"){
+            if(resettingLayer == "u" && hasMilestone("e",0)){
                 kept.push("upgrades")
             }
             layerDataReset(this.layer,kept)
@@ -143,12 +143,8 @@ addLayer("c", {
     },
     massgain(){
         let gain = new Decimal(0)
-        
+        if(hasUpgrade("e",14)) gain = gain.add(1)
         return gain
-    },
-    scpower(){
-        let power = 1
-        return power
     },
     update(diff){
         if(hasMilestone("c",1)) layers.c.buyables[11].buyMax()
@@ -161,11 +157,8 @@ addLayer("c", {
         "恒星质量": {
             content: [ ["infobox","introBox"],
                "main-display","prestige-button",["display-text",
-                function() {return '你有' + format(player.c.mass) + '恒星质量,将天体层级的两个购买项的软上限力量变为原来的100%'},
-               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
-               ["display-text",
-                function() {return "还没做（超级小声）"},
-               {"color": "#555555", "font-size": "8px", "font-family": "Comic Sans MS"}]],
+                function() {return '你有' + format(player.c.mass) + '恒星质量,将天体层级的两个购买项效果在软上限后变为原来的' + format(player.c.mass.root(2).div(10).add(1)) + '次方'},
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}]],
             unlocked(){return hasUpgrade('e',14)}
         },
     },
@@ -225,7 +218,7 @@ addLayer("c", {
             title: "星系",
             cost(x) { return new Decimal(10).mul(x.add(1).pow(3)) },
             display() { 
-                let disp = "增加熵获得<br>当前：x" + format(buyableEffect("c",11))
+                let disp = "增加天体获得<br>当前：x" + format(buyableEffect("c",11))
                 if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost()) + "<br>数量：" + format(getBuyableAmount("c",11))
                 if(hasUpgrade("c",14)) disp = disp + "x" + format(getBuyableAmount("c",12))
@@ -248,6 +241,7 @@ addLayer("c", {
                 effe = effe.add(1)
                 if(hasUpgrade("c",12)) effe = effe.pow(1.2)
                 if(effe > 1e30) effe = effe.div(1e30).log(2).pow(5).mul(1e30)
+                effe = effe.pow(player.c.mass.root(2).div(10).add(1))
                 return effe
             },
         },
@@ -274,6 +268,7 @@ addLayer("c", {
             effect(){
                 effe = getBuyableAmount("c",12).add(1).pow(5)
                 if(effe > 1e50) effe = effe.div(1e50).log(2).pow(5).mul(1e50)
+                effe = effe.pow(player.c.mass.root(2).div(10).add(1))
                 return effe
             },
         },
@@ -281,13 +276,19 @@ addLayer("c", {
     doReset(resettingLayer){
         if(layers[resettingLayer].row > layers[this.layer].row){
             let kept = ["unlocked","auto"]
-            if(resettingLayer == "e"){
+            if(resettingLayer == "e" && hasMilestone("e",0)){
                 kept.push("upgrades")
                 kept.push("milestones")
             }
-            if(resettingLayer == "u"){
+            if(resettingLayer == "u" && hasMilestone("e",0)){
                 kept.push("upgrades")
                 kept.push("milestones")
+            }
+            if(resettingLayer == "e" && hasUpgrade("e",21)){
+                kept.push("mass")
+            }
+            if(resettingLayer == "u" && hasUpgrade("e",21)){
+                kept.push("mass")
             }
             layerDataReset(this.layer,kept)
         }
@@ -425,7 +426,8 @@ addLayer("u", {
             cost: new Decimal(0),
             effect(){
                 let effe = player.u.points.log(10).div(10).add(1)
-                if(effe.sub(2) > 0) return effe.sub(1).log(10).add(2)
+                if(effe.sub(2) > 0) effe = effe.sub(1).log(10).add(2)
+                if(effe.sub(3) > 0) effe = effe.sub(2).root(2).add(2)
                 return effe
             },
             unlocked(){
@@ -731,10 +733,13 @@ addLayer("e", {
     gainExp() {
         exp = new Decimal(0.02)
         if(player.e.points.sub(5) > 0) exp = exp.sub(0.005)
+        if(player.e.points.sub(32) > 0) exp = exp.sub(0.003)
         return exp
     },
     elegain(){
         let gain = player.e.points.pow(3).div(100)
+        let bas = new Decimal(2)
+        if(hasUpgrade("e",15)) gain = bas.pow(player.e.points.div(2))
         if(hasUpgrade("e",11)) gain = gain.mul(upgradeEffect("e",11))
         if(hasUpgrade("e",12)) gain = gain.mul(upgradeEffect("e",12))
         return gain
@@ -791,6 +796,24 @@ addLayer("e", {
             title:"质量",
             description(){return "在天体层级解锁恒星质量"},
             cost: new Decimal(100000),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            unlocked(){
+                if(hasUpgrade("e",13)) return true
+                else return false
+            },
+        },
+        15: {
+            title:"公式加强",
+            description(){return "改变超重元素的获得公式"},
+            cost: new Decimal(3000000),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            unlocked(){
+                if(hasUpgrade("e",13)) return true
+                else return false
+            },
+        },
+        21: {
+            title:"恒星质量很强，让我们保留它",
+            description(){return "在第二行重置时保留恒星质量"},
+            cost: new Decimal(150000000),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
             unlocked(){
                 if(hasUpgrade("e",13)) return true
                 else return false
