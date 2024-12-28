@@ -120,6 +120,7 @@ addLayer("c", {
         unlocked: false,
 		points: new Decimal(0),
         mass: new Decimal(0),
+        masseff: new Decimal(0),
     }},
     color: "#FFFF00",
     requires: new Decimal(1000),
@@ -144,12 +145,16 @@ addLayer("c", {
     massgain(){
         let gain = new Decimal(0)
         if(hasUpgrade("e",14)) gain = gain.add(1)
+        if(hasUpgrade("u",21) && hasUpgrade("e",22)) gain = gain.mul(upgradeEffect("u",21))
+        if(hasUpgrade("e",23)) gain = gain.mul(upgradeEffect("e",23))
         return gain
     },
     update(diff){
         if(hasMilestone("c",1)) layers.c.buyables[11].buyMax()
         if(hasMilestone("c",2)) layers.c.buyables[12].buyMax()
         player.c.mass=player.c.mass.add(tmp.c.massgain.mul(diff))
+        player.c.masseff = player.c.mass.root(2).div(10).add(1)
+        if(player.c.masseff.sub(2.5) > 0) player.c.masseff = player.c.masseff.sub(1.5).log(10).add(2.5)
     },
     tabFormat: {
         "主界面": {
@@ -157,7 +162,7 @@ addLayer("c", {
         "恒星质量": {
             content: [ ["infobox","introBox"],
                "main-display","prestige-button",["display-text",
-                function() {return '你有' + format(player.c.mass) + '恒星质量,将天体层级的两个购买项效果在软上限后变为原来的' + format(player.c.mass.root(2).div(10).add(1)) + '次方'},
+                function() {return '你有' + format(player.c.mass) + '恒星质量,将天体层级的两个购买项效果在软上限后变为原来的' + format(player.c.masseff) + '次方'},
                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}]],
             unlocked(){return hasUpgrade('e',14)}
         },
@@ -241,7 +246,7 @@ addLayer("c", {
                 effe = effe.add(1)
                 if(hasUpgrade("c",12)) effe = effe.pow(1.2)
                 if(effe > 1e30) effe = effe.div(1e30).log(2).pow(5).mul(1e30)
-                effe = effe.pow(player.c.mass.root(2).div(10).add(1))
+                effe = effe.pow(player.c.masseff)
                 return effe
             },
         },
@@ -268,7 +273,7 @@ addLayer("c", {
             effect(){
                 effe = getBuyableAmount("c",12).add(1).pow(5)
                 if(effe > 1e50) effe = effe.div(1e50).log(2).pow(5).mul(1e50)
-                effe = effe.pow(player.c.mass.root(2).div(10).add(1))
+                effe = effe.pow(player.c.masseff)
                 return effe
             },
         },
@@ -422,13 +427,23 @@ addLayer("u", {
         },
         21: {
             title:"被核弹炸死的宇宙太fvv了",
-            description(){return "使你的被核弹炸死的宇宙将熵提高<br>当前效果：^" + format(upgradeEffect("u",21))},
+            description(){
+                if(!hasUpgrade("e",22)) return "使你的被核弹炸死的宇宙将熵提高<br>当前效果：^" + format(upgradeEffect("u",21))
+                else return "使你的被核弹炸死的宇宙倍增恒星质量和超重元素获取<br>当前效果：x" + format(upgradeEffect("u",21))
+            },
             cost: new Decimal(0),
             effect(){
-                let effe = player.u.points.log(10).div(10).add(1)
-                if(effe.sub(2) > 0) effe = effe.sub(1).log(10).add(2)
-                if(effe.sub(3) > 0) effe = effe.sub(2).root(2).add(2)
-                return effe
+                if(!hasUpgrade("e",22)){
+                    let effe = player.u.points.log(10).div(10).add(1)
+                    if(effe.sub(2) > 0) effe = effe.sub(1).log(10).add(2)
+                    if(effe.sub(3) > 0) effe = effe.sub(2).root(2).add(2)
+                    return effe
+                }
+                else{
+                    let effe = player.u.points.log(10).pow(5)
+                    return effe
+                }
+                
             },
             unlocked(){
                 if(player.u.points > 49) return true
@@ -624,15 +639,15 @@ addLayer("u", {
             title: "宇宙IQ炸死倍减",
             cost(x) { 
                 let bas = new Decimal(100)
-                //let scal1 = new Decimal(2)
-                //if(getBuyableAmount("u",12).sub(300) > 0) x = x.sub(300).pow(scal1).add(300)
+                let scal1 = new Decimal(2)
+                if(getBuyableAmount("u",13).sub(300) > 0) x = x.sub(300).pow(scal1).add(300)
                 return new Decimal("1e600").mul(bas.pow(x.pow(1.1)))
             },
             display() { 
                 let disp = "基于被核弹炸死的宇宙增加傻逼宇宙力量获得<br>当前：x" + format(buyableEffect("u",13))
                 //if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost())
-                //if(getBuyableAmount("u",12).sub(300) > 0) disp = disp + "（折算）"
+                if(getBuyableAmount("u",13).sub(300) > 0) disp = disp + "（折算）"
                 disp = disp + "<br>数量：" + format(getBuyableAmount("u",13))
                 //if(hasUpgrade("u",14)) disp = disp + "x" + format(getBuyableAmount("c",12))
                 return disp
@@ -734,6 +749,7 @@ addLayer("e", {
         exp = new Decimal(0.02)
         if(player.e.points.sub(5) > 0) exp = exp.sub(0.005)
         if(player.e.points.sub(32) > 0) exp = exp.sub(0.003)
+        if(player.e.points.sub(60) > 0) exp = exp.sub(0.002)
         return exp
     },
     elegain(){
@@ -742,6 +758,7 @@ addLayer("e", {
         if(hasUpgrade("e",15)) gain = bas.pow(player.e.points.div(2))
         if(hasUpgrade("e",11)) gain = gain.mul(upgradeEffect("e",11))
         if(hasUpgrade("e",12)) gain = gain.mul(upgradeEffect("e",12))
+        if(hasUpgrade("u",21) && hasUpgrade("e",22)) gain = gain.mul(upgradeEffect("u",21))
         return gain
     },
     update(diff){
@@ -806,7 +823,7 @@ addLayer("e", {
             description(){return "改变超重元素的获得公式"},
             cost: new Decimal(3000000),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
             unlocked(){
-                if(hasUpgrade("e",13)) return true
+                if(hasUpgrade("e",14)) return true
                 else return false
             },
         },
@@ -815,7 +832,28 @@ addLayer("e", {
             description(){return "在第二行重置时保留恒星质量"},
             cost: new Decimal(150000000),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
             unlocked(){
-                if(hasUpgrade("e",13)) return true
+                if(hasUpgrade("e",15)) return true
+                else return false
+            },
+        },
+        22: {
+            title:"《boost or nerf》",
+            description(){return "让u层升级21从加成熵变为加成恒星质量获取"},
+            cost: new Decimal(1e10),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            unlocked(){
+                if(hasUpgrade("e",21)) return true
+                else return false
+            },
+        },
+        23: {
+            title:"额，我也不知道为什么这么写",
+            description(){return "让超重元素倍增恒星质量获取<br>当前: x" + format(upgradeEffect("e",23))},
+            cost: new Decimal(1e24),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            effect(){
+                return player.e.ele.log(10).pow(2)
+            },
+            unlocked(){
+                if(hasUpgrade("e",22)) return true
                 else return false
             },
         },

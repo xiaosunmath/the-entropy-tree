@@ -21,6 +21,8 @@ let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h1>如果发现更新后卡死了，说明作者又加了软上限以平衡<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v0.3.1.2</h3><br>
+		-添加2个升级
 	<h3>v0.3.1.1</h3><br>
 		-添加2个升级<br>
 	<h3>v0.3.1</h3><br>
@@ -101,7 +103,7 @@ function getPointGen() {
 
 	if(hasUpgrade("u",11)) gain = gain.pow(1.02)
 	if(hasUpgrade("u",12)) gain = gain.pow(1.1)
-	if(hasUpgrade("u",21)) gain = gain.pow(upgradeEffect("u",21))
+	if(hasUpgrade("u",21) && !hasUpgrade("e",22)) gain = gain.pow(upgradeEffect("u",21))
 	if(inChallenge("u",11)) gain = gain.pow(0.5)
 	if(hasChallenge("u",11)) gain = gain.pow(1.4514)
 	if(inChallenge("u",13)) gain = gain.pow(0.25)
@@ -120,7 +122,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e1400"))
+	return player.points.gte(new Decimal("1e2800"))
 }
 
 
