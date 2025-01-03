@@ -147,6 +147,7 @@ addLayer("c", {
         if(hasUpgrade("e",14)) gain = gain.add(1)
         if(hasUpgrade("u",21) && hasUpgrade("e",22)) gain = gain.mul(upgradeEffect("u",21))
         if(hasUpgrade("e",23)) gain = gain.mul(upgradeEffect("e",23))
+        if(hasUpgrade("e",31)) gain = gain.mul(upgradeEffect("e",31))
         return gain
     },
     update(diff){
@@ -336,6 +337,8 @@ addLayer("u", {
     baseAmount() {return player.points},
     type: "normal",
     exponent: 0.004,
+    softcap: new Decimal("1e880"), 
+    softcapPower: new Decimal(0.2), 
     unigain(){
         let gain = new Decimal(0)
         if(hasChallenge("u",12)) gain = gain.add(1)
@@ -365,7 +368,11 @@ addLayer("u", {
     },
     tabFormat: {
         "面": {
-            content: [ ["infobox","introBox"],"main-display","prestige-button","upgrades"],},
+            content: [ ["infobox","introBox"],"main-display","prestige-button",
+            ["display-text",
+                function() {return '当一次重置获得的被核弹炸死的宇宙数量超过1e880时，超出部分将被5次根'},
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+               "upgrades"],},
         "令人嗝屁的界面": {
             content: [ ["infobox","introBox"],"main-display","challenges"],
             unlocked(){return hasUpgrade('u',14)}
@@ -733,6 +740,9 @@ addLayer("e", {
         unlocked: false,
 		points: new Decimal(0),
         ele: new Decimal(0),
+        lele: new Decimal(0),
+        llele: new Decimal(0),
+        lllele: new Decimal(0),
     }},
     color: "#DD55DD",
     requires: new Decimal("1e525"),
@@ -759,6 +769,7 @@ addLayer("e", {
         if(hasUpgrade("e",11)) gain = gain.mul(upgradeEffect("e",11))
         if(hasUpgrade("e",12)) gain = gain.mul(upgradeEffect("e",12))
         if(hasUpgrade("u",21) && hasUpgrade("e",22)) gain = gain.mul(upgradeEffect("u",21))
+        if(hasUpgrade("e",25)) gain = gain.mul(upgradeEffect("e",25))
         return gain
     },
     update(diff){
@@ -771,6 +782,22 @@ addLayer("e", {
                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
                "upgrades","milestones"],
         },
+        "元素": {
+            content: [["infobox","introBox"],"main-display",
+            ["display-text",function() {return '你有' + format(player.e.ele) + '超重元素,增益熵获取×' + format(player.e.ele.add(1).pow(50)) + '（在指数之后）'},
+                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",function() {return '你有' + format(player.e.lele) + '重元素,增益熵获取×' + format(player.e.lele.add(1).pow(25)) + '（在指数之后）'},
+                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",function() {return '你有' + format(player.e.llele) + '元素,增益熵获取×' + format(player.e.llele.add(1).pow(17)) + '（在指数之后）'},
+                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",function() {return '你有' + format(player.e.lllele) + '轻元素,增益熵获取×' + format(player.e.lllele.add(1).pow(10)) + '（在指数之后）'},
+                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            "clickables"
+               ],
+            unlocked(){
+                return hasUpgrade("e",24)
+            }
+        }
     },
     upgrades: {
         11: {
@@ -857,12 +884,126 @@ addLayer("e", {
                 else return false
             },
         },
+        24: {
+            title:"裂变开始",
+            description(){return "解锁元素裂变"},
+            cost: new Decimal(3e26),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            unlocked(){
+                if(hasUpgrade("e",23)) return true
+                else return false
+            },
+        },
+        25: {
+            title:"加速合成",
+            description(){return "让重元素*元素*轻元素倍增超重元素获取<br>当前：x" + format(upgradeEffect("e",25))},
+            cost: new Decimal(5e28),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            effect(){
+                return player.e.lele.mul(player.e.llele.mul(player.e.lllele)).add(1).root(8)
+            },
+            unlocked(){
+                if(hasUpgrade("e",24)) return true
+                else return false
+            },
+        },
+        31: {
+            title:"质量",
+            description(){return "让粒子倍增恒星质量获取<br>当前：x" + format(upgradeEffect("e",31))},
+            cost: new Decimal(1e40),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            effect(){
+                return player.p.points.add(1).log(1.01)
+            },
+            unlocked(){
+                if(hasUpgrade("e",25)) return true
+                else return false
+            },
+        },
+        32: {
+            title:"好吧，我不会做",
+            description(){return "自动点击最后一个可点击，且不消耗任何东西，且公式更好^-1"},
+            cost: new Decimal(1e45),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            unlocked(){
+                if(hasUpgrade("e",31)) return true
+                else return false
+            },
+        },
+        33: {
+            title:"咕咕咕",
+            description(){return "解锁宇宙微波辐射温度（可以指数增加傻逼宇宙力量）"},
+            cost: new Decimal(1e309),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            unlocked(){
+                if(hasUpgrade("e",32)) return true
+                else return false
+            },
+        },
     },
     milestones: {
         0: {
             requirementDescription: "10元素合成器",
             effectDescription: "在第二行重置时保留第一行的升级和里程碑",
             done() { return player.e.points.gte(10) }
+        },
+        1: {
+            requirementDescription: "100元素合成器",
+            effectDescription: "你可以购买最大元素合成器",
+            done() { return player.e.points.gte(100) }
+        },
+    },
+    clickables: {
+        11: {
+            title: "核裂变1",
+            display(){return "将你10%超重元素转化为重元素"},
+            onClick(){
+                player.e.lele = player.e.lele.add(player.e.ele.root(1.5))
+                player.e.ele = player.e.ele.sub(player.e.ele.mul(0.1))
+            },
+            canClick(){
+                return player.e.ele > 0
+            },
+        },
+        12: {
+            title: "核裂变2",
+            display(){return "将你10%重元素转化为元素"},
+            onClick(){
+                player.e.llele = player.e.llele.add(player.e.lele.root(1.3))
+                player.e.lele = player.e.lele.sub(player.e.lele.mul(0.1))
+            },
+            canClick(){
+                return player.e.lele > 0
+            },
+        },
+        13: {
+            title: "核裂变3",
+            display(){return "将你10%元素转化为轻元素"},
+            onClick(){
+                player.e.lllele = player.e.lllele.add(player.e.llele.root(1.2))
+                player.e.llele = player.e.llele.sub(player.e.llele.mul(0.1))
+            },
+            canClick(){
+                return player.e.llele > 0
+            },
+        },
+        21: {
+            title: "总裂变",
+            display(){return "同时进行上面的3个裂变"},
+            onClick(){
+                player.e.lele = player.e.lele.add(player.e.ele.root(1.5))
+                player.e.ele = player.e.ele.sub(player.e.ele.mul(0.1))
+                player.e.llele = player.e.llele.add(player.e.lele.root(1.3))
+                player.e.lele = player.e.lele.sub(player.e.lele.mul(0.1))
+                player.e.lllele = player.e.lllele.add(player.e.llele.root(1.2))
+                player.e.llele = player.e.llele.sub(player.e.llele.mul(0.1))
+            },
+            onHold(){
+                player.e.lele = player.e.lele.add(player.e.ele.root(1.5))
+                player.e.ele = player.e.ele.sub(player.e.ele.mul(0.1))
+                player.e.llele = player.e.llele.add(player.e.lele.root(1.3))
+                player.e.lele = player.e.lele.sub(player.e.lele.mul(0.1))
+                player.e.lllele = player.e.lllele.add(player.e.llele.root(1.2))
+                player.e.llele = player.e.llele.sub(player.e.llele.mul(0.1))
+            },
+            canClick(){
+                return player.e.llele > 0
+            },
         },
     },
     
