@@ -328,7 +328,10 @@ addLayer("u", {
     startData() { return {
         unlocked: false,
 		points: new Decimal(0),
-        uni: new Decimal(0)
+        uni: new Decimal(0),
+        temperature: new Decimal(3),
+        temeffect: new Decimal(1),
+        layerceff: new Decimal(0),
     }},
     color: "#999999",
     requires: new Decimal(1e120),
@@ -347,11 +350,14 @@ addLayer("u", {
         gain = gain.mul(buyableEffect("u",12))
         gain = gain.mul(buyableEffect("u",13))
         if(hasUpgrade("u",34)) gain = gain.mul(upgradeEffect("u",34))
-        if(hasUpgrade("e",13)) mult = mult.mul(upgradeEffect("e",13))
+        if(hasUpgrade("e",13)) gain = gain.mul(upgradeEffect("e",13))
+        gain = gain.pow(player.u.temeffect)
         return gain
     },
     update(diff){
-        player.u.uni=player.u.uni.add(tmp.u.unigain.mul(diff))
+        player.u.uni = player.u.uni.add(tmp.u.unigain.mul(diff))
+        player.u.temeffect = player.u.temperature.sub(3).add(1).log(5).add(1)
+        player.u.layerceff = player.c.points.div(10).add(1).log(10).div(10000).add(3)
     },
     gainMult() {
         mult = new Decimal(1)
@@ -380,8 +386,16 @@ addLayer("u", {
         "傻逼之力量": {
             content: [["display-text",
                 function() {return '你有' + format(player.u.uni) + '傻逼宇宙力量'},
-               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],"buyables"],
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+                "buyables"],
             unlocked(){return hasChallenge("u",12)}
+        },
+        "温度": {
+            content: [["display-text",
+                function() {return '宇宙的微波背景辐射温度为' + format(player.u.temperature) + '开尔文,将傻逼宇宙力量和熵提高到' + format(player.u.temeffect) + "次方"},
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+               "clickables"],
+            unlocked(){return hasUpgrade("e",33)}
         },
     },
     
@@ -562,10 +576,49 @@ addLayer("u", {
                 else return false
             },
         },
+        41: {
+            title:"力量",
+            description(){return "让傻逼宇宙力量倍增超重元素获得<br>当前：x" + format(upgradeEffect("u",41))},
+            cost: new Decimal("1e2500"),currencyDisplayName:"傻逼宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
+            effect(){
+                return player.u.uni.add(1).log(10).pow(2)
+            },
+            unlocked(){
+                if(hasUpgrade("e",33)) return true
+                else return false
+            },
+        },
+        42: {
+            title:"解锁挑战4",
+            description(){return "挑战那里空着一块很难看是吧，现在补上"},
+            cost: new Decimal("1e950"),
+            unlocked(){
+                if(hasUpgrade("u",41)) return true
+                else return false
+            },
+        },
         91: {
             title:"描述描述描述描述描述描述描述描述",
             description(){return "为什么我不用里程碑呢，当然是因为占空间小啊<br>"},
             cost: new Decimal("(e^114514) 1"),
+            unlocked(){
+                if(player.u.points > 0) return true
+                else return false
+            }
+        },
+        92: {
+            title:"只是一个为了庆祝的升级",
+            description(){return "layer.js突破1000行<br>版本v0.3.2"},
+            cost: new Decimal("(e^69420) 1"),
+            unlocked(){
+                if(player.u.points > 0) return true
+                else return false
+            }
+        },
+        201: {
+            title:"只有挂壁才能买到这个升级",
+            description(){return "我是最强黑客，我是最强黑客！"},
+            cost: new Decimal("(e^1.79e308) 1"),
             unlocked(){
                 if(player.u.points > 0) return true
                 else return false
@@ -681,7 +734,18 @@ addLayer("u", {
             }
         },
     },
-    
+    clickables:{
+        11:{
+            title: "天体加热",
+            display(){return "使你的天体用来提升宇宙温度"},
+            onClick(){
+                player.u.temperature = player.u.layerceff.max(player.u.temperature)
+            },
+            canClick(){
+                return player.c.points > 0
+            },
+        },
+    },
     challenges: {
         11: {
             name: "宇宙太膨胀了，作者压制一下",
@@ -714,6 +778,17 @@ addLayer("u", {
             },
             unlocked(){
                 if(hasUpgrade("u",26)) return true
+                else return false
+            },
+        },
+        22: {
+            name: "强制裂变",
+            challengeDescription: "使你的所有元素强制裂变为质子，中子和电子",
+            goalDescription: "目标：K9e15攻击力",
+            canComplete: function() {return player.points.gte(1e309)},
+            rewardDescription: "我闲的蛋疼做这个玩意",
+            unlocked(){
+                if(hasUpgrade("u",42)) return true
                 else return false
             },
         },
@@ -751,6 +826,14 @@ addLayer("e", {
     baseAmount() {return player.c.points},
     type: "static",
     exponent: 1,
+    autoPrestige(){
+        if(hasMilestone("e",1)) return true
+        else return false
+    },
+    resetsNothing(){
+        if(hasMilestone("e",1)) return true
+        else return false
+    },
     gainMult() {
         mult = new Decimal(1)
         return mult
@@ -760,6 +843,7 @@ addLayer("e", {
         if(player.e.points.sub(5) > 0) exp = exp.sub(0.005)
         if(player.e.points.sub(32) > 0) exp = exp.sub(0.003)
         if(player.e.points.sub(60) > 0) exp = exp.sub(0.002)
+        if(player.e.points.sub(109) > 0) exp = exp.sub(0.005)
         return exp
     },
     elegain(){
@@ -770,16 +854,30 @@ addLayer("e", {
         if(hasUpgrade("e",12)) gain = gain.mul(upgradeEffect("e",12))
         if(hasUpgrade("u",21) && hasUpgrade("e",22)) gain = gain.mul(upgradeEffect("u",21))
         if(hasUpgrade("e",25)) gain = gain.mul(upgradeEffect("e",25))
+        if(hasUpgrade("u",41)) gain = gain.mul(upgradeEffect("u",41))
         return gain
     },
     update(diff){
         player.e.ele=player.e.ele.add(tmp.e.elegain.mul(diff))
+        if(hasUpgrade("e",32)) layers.e.clickables[21].onHold()
     },
     tabFormat: {
         "主界面": {
             content: [ ["infobox","introBox"],"main-display","prestige-button",
             ["display-text",function() {return '你有' + format(player.e.ele) + '超重元素,增益熵获取×' + format(player.e.ele.add(1).pow(50)) + '（在指数之后）'},
                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",function() {return '你的元素合成器在5，32，60将受到软上限'},
+                {"color": "#FFFFFF", "font-size": "50px", "font-family": "Comic Sans MS"}],
+            ["display-text",function() {
+                if(player.e.points.sub(109) > 0)
+                    return '你的元素合成器被警察逮捕了，受到超级严重的软上限'
+            },
+                {"color": "#FFFFFF", "font-size": "110px", "font-family": "Comic Sans MS"}],
+            ["display-text",function() {
+                if(player.e.points.sub(119) > 0)
+                    return '你的元素合成器被送进精神病院，受到超级严重的软上限'
+            },
+                {"color": "#FFFFFF", "font-size": "120px", "font-family": "Comic Sans MS"}],
                "upgrades","milestones"],
         },
         "元素": {
@@ -918,8 +1016,8 @@ addLayer("e", {
             },
         },
         32: {
-            title:"好吧，我不会做",
-            description(){return "自动点击最后一个可点击，且不消耗任何东西，且公式更好^-1"},
+            title:"拉屎",
+            description(){return "自动点击最后一个可点击，且不消耗任何东西"},
             cost: new Decimal(1e45),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
             unlocked(){
                 if(hasUpgrade("e",31)) return true
@@ -927,9 +1025,9 @@ addLayer("e", {
             },
         },
         33: {
-            title:"咕咕咕",
-            description(){return "解锁宇宙微波辐射温度（可以指数增加傻逼宇宙力量）"},
-            cost: new Decimal(1e309),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
+            title:"其实我在很早就有这个想法了",
+            description(){return "解锁宇宙微波辐射温度"},
+            cost: new Decimal(110),
             unlocked(){
                 if(hasUpgrade("e",32)) return true
                 else return false
@@ -944,7 +1042,7 @@ addLayer("e", {
         },
         1: {
             requirementDescription: "100元素合成器",
-            effectDescription: "你可以购买最大元素合成器",
+            effectDescription: "你可以自动购买元素合成器且元素合成不重置任何东西",
             done() { return player.e.points.gte(100) }
         },
     },
@@ -954,7 +1052,7 @@ addLayer("e", {
             display(){return "将你10%超重元素转化为重元素"},
             onClick(){
                 player.e.lele = player.e.lele.add(player.e.ele.root(1.5))
-                player.e.ele = player.e.ele.sub(player.e.ele.mul(0.1))
+                if(!hasUpgrade("e",32)) player.e.ele = player.e.ele.sub(player.e.ele.mul(0.1))
             },
             canClick(){
                 return player.e.ele > 0
@@ -965,7 +1063,7 @@ addLayer("e", {
             display(){return "将你10%重元素转化为元素"},
             onClick(){
                 player.e.llele = player.e.llele.add(player.e.lele.root(1.3))
-                player.e.lele = player.e.lele.sub(player.e.lele.mul(0.1))
+                if(!hasUpgrade("e",32)) player.e.lele = player.e.lele.sub(player.e.lele.mul(0.1))
             },
             canClick(){
                 return player.e.lele > 0
@@ -976,7 +1074,7 @@ addLayer("e", {
             display(){return "将你10%元素转化为轻元素"},
             onClick(){
                 player.e.lllele = player.e.lllele.add(player.e.llele.root(1.2))
-                player.e.llele = player.e.llele.sub(player.e.llele.mul(0.1))
+                if(!hasUpgrade("e",32)) player.e.llele = player.e.llele.sub(player.e.llele.mul(0.1))
             },
             canClick(){
                 return player.e.llele > 0
@@ -987,19 +1085,19 @@ addLayer("e", {
             display(){return "同时进行上面的3个裂变"},
             onClick(){
                 player.e.lele = player.e.lele.add(player.e.ele.root(1.5))
-                player.e.ele = player.e.ele.sub(player.e.ele.mul(0.1))
+                if(!hasUpgrade("e",32)) player.e.ele = player.e.ele.sub(player.e.ele.mul(0.1))
                 player.e.llele = player.e.llele.add(player.e.lele.root(1.3))
-                player.e.lele = player.e.lele.sub(player.e.lele.mul(0.1))
+                if(!hasUpgrade("e",32)) player.e.lele = player.e.lele.sub(player.e.lele.mul(0.1))
                 player.e.lllele = player.e.lllele.add(player.e.llele.root(1.2))
-                player.e.llele = player.e.llele.sub(player.e.llele.mul(0.1))
+                if(!hasUpgrade("e",32)) player.e.llele = player.e.llele.sub(player.e.llele.mul(0.1))
             },
             onHold(){
                 player.e.lele = player.e.lele.add(player.e.ele.root(1.5))
-                player.e.ele = player.e.ele.sub(player.e.ele.mul(0.1))
+                if(!hasUpgrade("e",32)) player.e.ele = player.e.ele.sub(player.e.ele.mul(0.1))
                 player.e.llele = player.e.llele.add(player.e.lele.root(1.3))
-                player.e.lele = player.e.lele.sub(player.e.lele.mul(0.1))
+                if(!hasUpgrade("e",32)) player.e.lele = player.e.lele.sub(player.e.lele.mul(0.1))
                 player.e.lllele = player.e.lllele.add(player.e.llele.root(1.2))
-                player.e.llele = player.e.llele.sub(player.e.llele.mul(0.1))
+                if(!hasUpgrade("e",32)) player.e.llele = player.e.llele.sub(player.e.llele.mul(0.1))
             },
             canClick(){
                 return player.e.llele > 0
