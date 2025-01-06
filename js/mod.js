@@ -117,10 +117,16 @@ function getPointGen() {
 	if(hasChallenge("u",11)) gain = gain.pow(1.4514)
 	if(inChallenge("u",13)) gain = gain.pow(0.25)
 	gain = gain.pow(player.u.temeffect)
-	gain = gain.mul(player.e.ele.add(1).pow(50))
-	gain = gain.mul(player.e.lele.add(1).pow(25))
-	gain = gain.mul(player.e.llele.add(1).pow(17))
-	gain = gain.mul(player.e.lllele.add(1).pow(10))
+	if(!inChallenge("u",22)){
+		gain = gain.mul(player.e.ele.add(1).pow(50))
+		gain = gain.mul(player.e.lele.add(1).pow(25))
+		gain = gain.mul(player.e.llele.add(1).pow(17))
+		gain = gain.mul(player.e.lllele.add(1).pow(10))
+	}
+	if(hasUpgrade("p",31)) gain = gain.mul(player.e.protoneff)
+	if(hasUpgrade("q",11)) gain = gain.mul(upgradeEffect("q",11))
+	if(hasUpgrade("q",14)) gain = gain.mul(upgradeEffect("q",14))
+	if(hasUpgrade("q",21)) gain = gain.mul(upgradeEffect("q",21))
 	return gain
 }
 
@@ -134,7 +140,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e7500"))
+	return player.points.gte(new Decimal("1e8500"))
 }
 
 

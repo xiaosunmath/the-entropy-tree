@@ -13,6 +13,7 @@ addLayer("p", {
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
+        pts: new Decimal(0),
     }},
     color: "#00FFFF",
     requires: new Decimal(10),
@@ -25,6 +26,7 @@ addLayer("p", {
         mult = new Decimal(1)
         if(hasUpgrade("p",12)) mult = mult.mul(upgradeEffect("p",12))
         if(hasUpgrade("u",11)) mult = mult.mul(10)
+        if(inChallenge("u",22)) mult = mult.div("1e500")
         return mult
     },
     gainExp() {
@@ -34,6 +36,10 @@ addLayer("p", {
         if(hasUpgrade("u",15)) exp = exp.add(0.2)
         if(inChallenge("u",21)) exp = exp.div(10)
         return exp
+    },
+    update(diff){
+        if(inChallenge("u",22)) player.p.pts = player.points
+        else player.p.pts = player.p.pts.sub(player.p.pts)
     },
     upgrades: {
         11: {
@@ -79,6 +85,22 @@ addLayer("p", {
             title:"反物质打破了无限，超越了e1000",
             description(){return "粒子获取指数+0.2<br>"},
             cost: new Decimal(200),
+        },
+        31: {
+            title:"重新开始？",
+            description(){return "给质子一个效果……<br>"},
+            cost: new Decimal(1e7),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            unlocked(){
+                return inChallenge("u",22) || hasUpgrade("p",31)
+            }
+        },
+        32: {
+            title:"层级",
+            description(){return "解锁一个新层级<br>"},
+            cost: new Decimal(1e20),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            unlocked(){
+                return inChallenge("u",22) || hasUpgrade("p",31)
+            }
         },
     },
     doReset(resettingLayer){
@@ -133,6 +155,7 @@ addLayer("c", {
         mult = new Decimal(1)
         mult = mult.mul(buyableEffect("c",11))
         if(hasUpgrade("u",11)) mult = mult.mul(10)
+        if(inChallenge("u",22)) mult = mult.div("1e500")
         return mult
     },
     gainExp() {
@@ -310,6 +333,179 @@ addLayer("c", {
     layerShown(){
         if(hasUpgrade("p",23)) return true
         if(player.u.points > 0) return true
+        else return false
+    }
+})
+addLayer("q", {
+    infoboxes:{
+        introBox:{
+            title:"夸克",
+            body(){
+                return "这个层级的颜色……不会"
+            }
+        },
+    },
+    name: "夸克",
+    symbol: "q",
+    position: 2,
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+		upquark: new Decimal(0),
+        downquark: new Decimal(0),
+        up_quark_energy: new Decimal(0),
+        down_quark_energy: new Decimal(0),
+    }},
+    color: "#FF00FF",
+    requires: new Decimal(1e20),
+    resource: "夸克",
+    baseResource: "熵",
+    baseAmount() {return player.points},
+    type: "normal",
+    exponent: 0.1,
+    gainMult() {
+        mult = new Decimal(1)
+        if(hasUpgrade("q",15)) mult = mult.mul(100)
+        return mult
+    },
+    gainExp() {
+        exp = new Decimal(1)
+        return exp
+    },
+    up_quark_energy_gain(){
+        let gain = player.q.upquark.pow(2)
+        return gain
+    },
+    down_quark_energy_gain(){
+        let gain = player.q.downquark.pow(2)
+        return gain
+    },
+    update(diff){
+        player.q.up_quark_energy = player.q.up_quark_energy.add(tmp.q.up_quark_energy_gain.mul(diff))
+        player.q.down_quark_energy = player.q.down_quark_energy.add(tmp.q.down_quark_energy_gain.mul(diff))
+    },
+    tabFormat: {
+        "主界面": {
+            content: [ ["infobox","introBox"],"main-display","prestige-button",
+            ["display-text",
+                function() {return '你有' + format(player.q.upquark) + '上夸克'},
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",
+                function() {return '你有' + format(player.q.up_quark_energy) + '上夸克能量'},
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",
+                function() {return '你有' + format(player.q.downquark) + '下夸克'},
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",
+                function() {return '你有' + format(player.q.down_quark_energy) + '下夸克能量'},
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+               "clickables"],},
+        "升级":{
+            content:[ ["infobox","introBox"],"main-display","prestige-button","upgrades"]
+        },
+    },
+    upgrades: {
+        11: {
+            title:"夸克能量有效果了",
+            description(){return "让上夸克能量倍增熵获取<br>当前：x" + format(upgradeEffect("q",11))},
+            cost: new Decimal(500),currencyDisplayName:"上夸克能量",currencyInternalName:"up_quark_energy",currencyLayer:"q",
+            effect(){
+                return player.q.up_quark_energy.add(1).log(1.5).add(1)
+            }
+        },
+        12: {
+            title:"上天的第一步",
+            description(){return "让上夸克能量倍增下夸克能量获取<br>当前：x" + format(upgradeEffect("q",12))},
+            cost: new Decimal(20000),currencyDisplayName:"上夸克能量",currencyInternalName:"up_quark_energy",currencyLayer:"q",
+            effect(){
+                return player.q.up_quark_energy.add(1).log(2).add(1)
+            }
+        },
+        13: {
+            title:"上天的第二步",
+            description(){return "让下夸克能量倍增上夸克能量获取<br>当前：x" + format(upgradeEffect("q",13))},
+            cost: new Decimal(100000),currencyDisplayName:"下夸克能量",currencyInternalName:"down_quark_energy",currencyLayer:"q",
+            effect(){
+                return player.q.down_quark_energy.add(1).log(2).add(1)
+            }
+        },
+        14: {
+            title:"上不了一点天",
+            description(){return "让下夸克能量倍增熵获取<br>当前：x" + format(upgradeEffect("q",14))},
+            cost: new Decimal(200000),currencyDisplayName:"下夸克能量",currencyInternalName:"down_quark_energy",currencyLayer:"q",
+            effect(){
+                return player.q.down_quark_energy.add(1).log(1.1).add(1)
+            }
+        },
+        15: {
+            title:"逃离点击",
+            description(){return "让夸克获得变为原来的100倍"},
+            cost: new Decimal(100),
+        },
+        21: {
+            title:"更多",
+            description(){return "基于夸克数量倍增熵获取<br>当前：x" + format(upgradeEffect("q",21))},
+            cost: new Decimal(10000),
+            effect(){
+                return player.q.points.add(1).root(1.5)
+            }
+        },
+    },
+    clickables:{
+        11: {
+            title: "转换上夸克",
+            display(){return "将你1夸克转化为1上夸克"},
+            onClick(){
+                player.q.points = player.q.points.sub(1)
+                player.q.upquark = player.q.upquark.add(1)
+            },
+            canClick(){
+                return player.q.points >= 1
+            },
+        },
+        12: {
+            title: "转换下夸克",
+            display(){return "将你1夸克转化为1下夸克"},
+            onClick(){
+                player.q.points = player.q.points.sub(1)
+                player.q.downquark = player.q.downquark.add(1)
+            },
+            canClick(){
+                return player.q.points >= 1
+            },
+        },
+        21: {
+            title: "百分比转换上夸克",
+            display(){return "将你10%夸克转化为上夸克"},
+            onClick(){
+                player.q.upquark = player.q.upquark.add(player.q.points.mul(0.1))
+                player.q.points = player.q.points.sub(player.q.points.mul(0.1))
+            },
+            canClick(){
+                return player.q.points >= 1
+            },
+        },
+        22: {
+            title: "百分比转换下夸克",
+            display(){return "将你10%夸克转化为下夸克"},
+            onClick(){
+                player.q.downquark = player.q.downquark.add(player.q.points.mul(0.1))
+                player.q.points = player.q.points.sub(player.q.points.mul(0.1))
+            },
+            canClick(){
+                return player.q.points >= 1
+            },
+        },
+    },
+    passiveGeneration(){
+        return 0
+    },
+    row: 0,
+    hotkeys: [
+        {key: "q", description: "Q: 进行夸克重置", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){
+        if(hasUpgrade("p",32) && (inChallenge("u",22) || hasChallenge("u",22))) return true
         else return false
     }
 })
@@ -783,9 +979,9 @@ addLayer("u", {
         },
         22: {
             name: "强制裂变",
-            challengeDescription: "使你的所有元素强制裂变为质子，中子和电子",
+            challengeDescription: "使你的所有元素强制裂变为质子，中子和电子。且你的粒子天体获得/1e500",
             goalDescription: "目标：K9e15攻击力",
-            canComplete: function() {return player.points.gte(1e309)},
+            canComplete: function() {return player.points.gte("(e^1.79e308) 1")},
             rewardDescription: "我闲的蛋疼做这个玩意",
             unlocked(){
                 if(hasUpgrade("u",42)) return true
@@ -818,6 +1014,12 @@ addLayer("e", {
         lele: new Decimal(0),
         llele: new Decimal(0),
         lllele: new Decimal(0),
+        proton: new Decimal(0),
+        neutron: new Decimal(0),
+        electron: new Decimal(0),
+        protoneff: new Decimal(0),
+        neutroneff: new Decimal(0),
+        electroneff: new Decimal(0),
     }},
     color: "#DD55DD",
     requires: new Decimal("1e525"),
@@ -855,11 +1057,29 @@ addLayer("e", {
         if(hasUpgrade("u",21) && hasUpgrade("e",22)) gain = gain.mul(upgradeEffect("u",21))
         if(hasUpgrade("e",25)) gain = gain.mul(upgradeEffect("e",25))
         if(hasUpgrade("u",41)) gain = gain.mul(upgradeEffect("u",41))
+        if(hasUpgrade("uc",11)) gain = gain.mul(upgradeEffect("uc",11))
         return gain
     },
     update(diff){
         player.e.ele=player.e.ele.add(tmp.e.elegain.mul(diff))
         if(hasUpgrade("e",32)) layers.e.clickables[21].onHold()
+        if(inChallenge("u",22)){
+            player.e.proton = player.e.proton.add(player.e.ele.mul(118))
+            player.e.neutron = player.e.neutron.add(player.e.ele.mul(179))
+            player.e.electron = player.e.electron.add(player.e.ele.mul(118))
+            //你不要管为什么这个乘数这么诡异，按118号元素算的
+            player.e.ele = player.e.ele.sub(player.e.ele)
+            player.e.lele = player.e.lele.sub(player.e.lele)
+            player.e.llele = player.e.llele.sub(player.e.llele)
+            player.e.lllele = player.e.lllele.sub(player.e.lllele)
+        }
+        if(!inChallenge("u",22)){
+            player.e.proton = player.e.proton.sub(player.e.proton)
+            player.e.neutron = player.e.neutron.sub(player.e.neutron)
+            player.e.electron = player.e.electron.sub(player.e.electron)
+        }
+        player.e.protoneff = player.e.proton.div(1e50).add(1).pow(2)
+        if(player.e.protoneff.sub(1e10) > 0) player.e.protoneff = player.e.protoneff.div(1e10).log(1.1).mul(1e10)
     },
     tabFormat: {
         "主界面": {
@@ -894,6 +1114,28 @@ addLayer("e", {
                ],
             unlocked(){
                 return hasUpgrade("e",24)
+            }
+        },
+        "原子拆分": {
+            content: [["infobox","introBox"],"main-display",
+            ["display-text",function() {
+                let disp = '你有' + format(player.e.proton) + '质子'
+                if(hasUpgrade("p",31)) disp = disp + ",增益熵获取x" + format(player.e.protoneff)
+                if(player.e.protoneff.sub(1e10) > 0) disp = disp + "(防止挂机的软上限)"
+                return disp
+            },
+                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",function() {
+                return '你有' + format(player.e.neutron) + '中子'
+            },
+                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",function() {
+                return '你有' + format(player.e.electron) + '电子'
+            },
+                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ],
+            unlocked(){
+                return inChallenge("u",22)
             }
         }
     },
@@ -975,7 +1217,7 @@ addLayer("e", {
             description(){return "让超重元素倍增恒星质量获取<br>当前: x" + format(upgradeEffect("e",23))},
             cost: new Decimal(1e24),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
             effect(){
-                return player.e.ele.log(10).pow(2)
+                return player.e.ele.add(1).log(10).add(1).pow(2)
             },
             unlocked(){
                 if(hasUpgrade("e",22)) return true
@@ -1008,7 +1250,7 @@ addLayer("e", {
             description(){return "让粒子倍增恒星质量获取<br>当前：x" + format(upgradeEffect("e",31))},
             cost: new Decimal(1e40),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
             effect(){
-                return player.p.points.add(1).log(1.01)
+                return player.p.points.add(1).log(1.01).add(1)
             },
             unlocked(){
                 if(hasUpgrade("e",25)) return true
@@ -1115,4 +1357,56 @@ addLayer("e", {
         {key: "e", description: "E: 进行天体合成重置", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return hasUpgrade("u",35)}
+})
+addLayer("uc", {
+    infoboxes:{
+        introBox:{
+            title:"一个介绍",
+            body(){
+                return "这是为了u层挑战4专门准备的升级层，本层级的升级必须在uc4里购买<br>还有，千万千万不要手欠用控制台重置，否则相当于硬重置"
+            }
+        },
+    },
+    name: "walalalalala",
+    symbol: "uc",
+    position: 0,
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#FFFFFF",
+    requires: new Decimal("1"),
+    resource: "walalalalala",
+    baseResource: "熵",
+    baseAmount() {return player.points},
+    type: "normal",
+    exponent: 0,
+    gainMult() {
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() {
+        exp = new Decimal(1)
+        return exp
+    },
+    tabFormat: {
+        "面": {
+            content: [ ["infobox","introBox"],"main-display","upgrades"]},
+    },
+    upgrades: {
+        11: {
+            title:"升级1",
+            description(){return "使熵倍增超重元素获得<br>当前：x" + format(upgradeEffect("uc",11))},
+            cost: new Decimal(1e28),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            effect(){
+                return player.points.add(1).log(10).pow(3)
+            },
+        },
+    },
+    row: 999,
+    
+    hotkeys: [
+        {key: "", description: "", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return hasUpgrade("u",42)}
 })
