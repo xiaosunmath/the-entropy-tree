@@ -27,6 +27,7 @@ addLayer("p", {
         if(hasUpgrade("p",12)) mult = mult.mul(upgradeEffect("p",12))
         if(hasUpgrade("u",11)) mult = mult.mul(10)
         if(inChallenge("u",22)) mult = mult.div("1e500")
+        if(hasUpgrade("p",33)) mult = mult.mul("1e485")
         return mult
     },
     gainExp() {
@@ -100,6 +101,14 @@ addLayer("p", {
             cost: new Decimal(1e20),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
             unlocked(){
                 return inChallenge("u",22) || hasUpgrade("p",31)
+            }
+        },
+        33: {
+            title:"如何获得粒子，首先要获得粒子",
+            description(){return "粒子获得乘以1e485(指数前)，并且解锁一些夸克升级<br>"},
+            cost: new Decimal(20000),currencyDisplayName:"夸克",currencyInternalName:"points",currencyLayer:"q",
+            unlocked(){
+                return (inChallenge("u",22) || hasUpgrade("p",31)) && hasUpgrade("uc",11)
             }
         },
     },
@@ -355,8 +364,10 @@ addLayer("q", {
         downquark: new Decimal(0),
         up_quark_energy: new Decimal(0),
         down_quark_energy: new Decimal(0),
+        squark: new Decimal(0), //懒的打全名了,奇夸克
+        cquark: new Decimal(0), //懒的打全名了,粲夸克
     }},
-    color: "#FF00FF",
+    color: "#CC00CC",
     requires: new Decimal(1e20),
     resource: "夸克",
     baseResource: "熵",
@@ -383,6 +394,10 @@ addLayer("q", {
     update(diff){
         player.q.up_quark_energy = player.q.up_quark_energy.add(tmp.q.up_quark_energy_gain.mul(diff))
         player.q.down_quark_energy = player.q.down_quark_energy.add(tmp.q.down_quark_energy_gain.mul(diff))
+        if(hasUpgrade("q",22)){
+            player.q.upquark = player.q.points.mul(2).max(player.q.upquark)
+            player.q.downquark = player.q.points.mul(2).max(player.q.downquark)
+        }
     },
     tabFormat: {
         "主界面": {
@@ -403,6 +418,21 @@ addLayer("q", {
         "升级":{
             content:[ ["infobox","introBox"],"main-display","prestige-button","upgrades"]
         },
+        "夸克统计": {
+            content: [
+            ["display-text",
+                function() {return '你有' + format(player.q.upquark) + '上夸克'},
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",
+                function() {return '你有' + format(player.q.downquark) + '下夸克'},
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",
+                function() {
+                    if(hasUpgrade("q",24)) return '你有' + format(player.q.squark) + '奇夸克'
+                    else return ""
+                },
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ],},
     },
     upgrades: {
         11: {
@@ -411,7 +441,7 @@ addLayer("q", {
             cost: new Decimal(500),currencyDisplayName:"上夸克能量",currencyInternalName:"up_quark_energy",currencyLayer:"q",
             effect(){
                 return player.q.up_quark_energy.add(1).log(1.5).add(1)
-            }
+            },
         },
         12: {
             title:"上天的第一步",
@@ -419,7 +449,7 @@ addLayer("q", {
             cost: new Decimal(20000),currencyDisplayName:"上夸克能量",currencyInternalName:"up_quark_energy",currencyLayer:"q",
             effect(){
                 return player.q.up_quark_energy.add(1).log(2).add(1)
-            }
+            },
         },
         13: {
             title:"上天的第二步",
@@ -427,7 +457,7 @@ addLayer("q", {
             cost: new Decimal(100000),currencyDisplayName:"下夸克能量",currencyInternalName:"down_quark_energy",currencyLayer:"q",
             effect(){
                 return player.q.down_quark_energy.add(1).log(2).add(1)
-            }
+            },
         },
         14: {
             title:"上不了一点天",
@@ -435,7 +465,7 @@ addLayer("q", {
             cost: new Decimal(200000),currencyDisplayName:"下夸克能量",currencyInternalName:"down_quark_energy",currencyLayer:"q",
             effect(){
                 return player.q.down_quark_energy.add(1).log(1.1).add(1)
-            }
+            },
         },
         15: {
             title:"逃离点击",
@@ -448,7 +478,50 @@ addLayer("q", {
             cost: new Decimal(10000),
             effect(){
                 return player.q.points.add(1).root(1.5)
-            }
+            },
+        },
+        22: {
+            title:"二次逃离点击",
+            description(){return "将上夸克和下夸克数量锁定在夸克数量的200%"},
+            cost: new Decimal(500000),
+            unlocked(){
+                return hasUpgrade("p",33)
+            },
+        },
+        23: {
+            title:"第三次逃离点击",
+            description(){return "每秒获得1000%的夸克"},
+            cost: new Decimal(3000000),
+            unlocked(){
+                return hasUpgrade("p",33)
+            },
+        },
+        24: {
+            title:"更多类型",
+            description(){return "允许使用你的上夸克能量和下夸克能量加速夸克以对撞奇夸克（胡说八道ing）"},
+            cost: new Decimal(50000000),
+            unlocked(){
+                return hasUpgrade("p",33)
+            },
+        },
+        25: {
+            title:"奇夸克没有效果怎么行",
+            description(){return "基于奇夸克数量倍增夸克<br>当前：x" + format(upgradeEffect("q",25))},
+            cost: new Decimal(100000),currencyDisplayName:"奇夸克",currencyInternalName:"squark",currencyLayer:"q",
+            effect(){
+                return player.q.squark.add(1).pow(1.5)
+            },
+            unlocked(){
+                return hasUpgrade("p",33)
+            },
+        },
+        91: {
+            title:"更多类型2(我也不知道扔哪里，先扔到91吧，总之以后肯定要做的)",
+            description(){return "允许使用你的上夸克能量和下夸克能量加速夸克以对撞粲夸克（胡说八道ing）"},
+            cost: new Decimal("(e^1.79e308) 1"),
+            unlocked(){
+                return hasUpgrade("p",33)
+            },
         },
     },
     clickables:{
@@ -496,9 +569,24 @@ addLayer("q", {
                 return player.q.points >= 1
             },
         },
+        31: {
+            title: "对撞奇夸克",
+            display(){return "将你50%的夸克对撞成为奇夸克"},
+            onClick(){
+                player.q.squark = player.q.squark.add(player.q.points.div(10000))
+                player.q.points = player.q.points.mul(0.5)
+            },
+            canClick(){
+                return player.q.points >= 20000
+            },
+            unlocked(){
+                return hasUpgrade("q",24)
+            }
+        },
     },
     passiveGeneration(){
-        return 0
+        if(hasUpgrade("q",23)) return 10
+        else return 0
     },
     row: 0,
     hotkeys: [
@@ -756,7 +844,7 @@ addLayer("u", {
             description(){return "基于被核弹炸死的宇宙数量乘以傻逼宇宙力量<br>当前：×" + format(upgradeEffect("u",34))},
             cost: new Decimal(1e18),
             effect(){
-                return player.u.points.root(3)
+                return player.u.points.add(1).root(3)
             },
             unlocked(){
                 if(hasUpgrade("u",33)) return true
@@ -1363,7 +1451,7 @@ addLayer("uc", {
         introBox:{
             title:"一个介绍",
             body(){
-                return "这是为了u层挑战4专门准备的升级层，本层级的升级必须在uc4里购买<br>还有，千万千万不要手欠用控制台重置，否则相当于硬重置"
+                return "这是为了u层挑战4专门准备的升级层，本层级的升级必须在uc4里购买<br>还有，千万千万不要手欠用控制台重置，否则相当于硬重置<br>(tips:本层级的每一个升级都会解锁一些升级)"
             }
         },
     },
@@ -1399,7 +1487,16 @@ addLayer("uc", {
             description(){return "使熵倍增超重元素获得<br>当前：x" + format(upgradeEffect("uc",11))},
             cost: new Decimal(1e28),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
             effect(){
-                return player.points.add(1).log(10).pow(3)
+                return player.points.add(1).log(10).add(1).pow(3)
+            },
+        },
+        12: {
+            title:"升级2",
+            description(){return "基于傻逼宇宙力量倍增熵获取(在uc4中被削弱)<br>当前：x" + format(upgradeEffect("uc",12))},
+            cost: new Decimal(1e60),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            effect(){
+                if(inChallenge("u",22)) return player.u.uni.add(1).log(10).add(1).root(2)
+                else return player.u.uni.add(1).log(10).add(1).pow(200)
             },
         },
     },

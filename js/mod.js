@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.3",
+	num: "0.3.3.1",
 	name: "作者在谋划写一个加强疫苗弱化版",
 }
 
@@ -21,6 +21,8 @@ let changelog = `
 	<h1>不，你应该自己写这个<h1><br>
 	<h1>如果发现更新后卡死了，说明作者又加了软上限以平衡<h1><br>
 	<h3>Changelog:</h3><br>
+	<h3>v0.3.3.1</h3><br>
+		-添加6个升级<br>
 	<h3>v0.3.3</h3><br>
 		-添加9个升级<br>
 		-添加2个新层<br>
@@ -128,6 +130,8 @@ function getPointGen() {
 	if(hasUpgrade("q",11)) gain = gain.mul(upgradeEffect("q",11))
 	if(hasUpgrade("q",14)) gain = gain.mul(upgradeEffect("q",14))
 	if(hasUpgrade("q",21)) gain = gain.mul(upgradeEffect("q",21))
+	if(hasUpgrade("q",25)) gain = gain.mul(upgradeEffect("q",25))
+	if(hasUpgrade("uc",12)) gain = gain.mul(upgradeEffect("uc",12))
 	return gain
 }
 
@@ -136,12 +140,12 @@ function addedPlayerData() { return {
 }}
 
 // Display extra things at the top of the page
-var displayThings = [
+var displayThings = ["手痒痒，想给熵一个软上限"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e8500"))
+	return player.points.gte(new Decimal("1e9400"))
 }
 
 
