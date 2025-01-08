@@ -71,6 +71,19 @@ addLayer("p", {
             cost: new Decimal(10),
             effect(){return player.points.add(2).log(2)},
         },
+        14: {
+            title:"禁言天神-666大黑奴",
+            description(){return "基于666大黑奴一次禁言的时间给夸克一个加成(最多29天23小时59分)<br>当前：x" + format(upgradeEffect("p",14))},
+            cost: new Decimal(1e27),
+            effect(){
+                let effe = new Decimal(600)
+                if(hasUpgrade("p",24)) effe = effe.pow(upgradeEffect("p",24))
+                return effe.min(2591940)
+            },
+            unlocked(){
+                return hasUpgrade("uc",12)
+            }
+        },
         21: {
             title:"反物质反物质反物质反物质反物质",
             description(){return "反物质开始爆炸，基于粒子增加粒子乘数<br>当前：x" + format(upgradeEffect("p",21))},
@@ -86,6 +99,15 @@ addLayer("p", {
             title:"反物质打破了无限，超越了e1000",
             description(){return "粒子获取指数+0.2<br>"},
             cost: new Decimal(200),
+        },
+        24: {
+            title:"再度刷屏",
+            description(){return "获得点击Q群管家刷屏的力量，指数倍增禁言时长<br>当前：^" + format(upgradeEffect("p",24))},
+            cost: new Decimal(1e33),
+            effect(){return player.points.add(1).log(10).add(1).root(10)},
+            unlocked(){
+                return hasUpgrade("p",14)
+            }
         },
         31: {
             title:"重新开始？",
@@ -366,6 +388,7 @@ addLayer("q", {
         down_quark_energy: new Decimal(0),
         squark: new Decimal(0), //懒的打全名了,奇夸克
         cquark: new Decimal(0), //懒的打全名了,粲夸克
+        quarkpts: new Decimal(0), //夸克研究点数
     }},
     color: "#CC00CC",
     requires: new Decimal(1e20),
@@ -377,6 +400,7 @@ addLayer("q", {
     gainMult() {
         mult = new Decimal(1)
         if(hasUpgrade("q",15)) mult = mult.mul(100)
+        if(hasUpgrade("p",14)) mult = mult.mul(upgradeEffect("p",14))
         return mult
     },
     gainExp() {
@@ -432,6 +456,22 @@ addLayer("q", {
                     else return ""
                 },
                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ["display-text",
+                function() {
+                    if(hasUpgrade("q",31)) return '你有' + format(player.q.cquark) + '粲夸克'
+                    else return ""
+                },
+               {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
+            ],},
+        "夸克研究树": {
+            content: [
+            ["display-text",
+                function() {return '你有' + format(player.q.quarkpts) + '夸克研究点数'},
+               {"color": "#FFFFFF", "font-size": "15px"}],
+            "buyables",
+            ["display-text",
+                function() {return '怎么做一个子标签页一些升级，另一个子标签页一些升级。还有怎么调整可购买的大小qwq'},
+               {"color": "#FFFFFF", "font-size": "20px"}],
             ],},
     },
     upgrades: {
@@ -506,8 +546,8 @@ addLayer("q", {
         },
         25: {
             title:"奇夸克没有效果怎么行",
-            description(){return "基于奇夸克数量倍增夸克<br>当前：x" + format(upgradeEffect("q",25))},
-            cost: new Decimal(100000),currencyDisplayName:"奇夸克",currencyInternalName:"squark",currencyLayer:"q",
+            description(){return "基于奇夸克数量倍增熵<br>当前：x" + format(upgradeEffect("q",25))},
+            cost: new Decimal(30000),currencyDisplayName:"奇夸克",currencyInternalName:"squark",currencyLayer:"q",
             effect(){
                 return player.q.squark.add(1).pow(1.5)
             },
@@ -515,12 +555,54 @@ addLayer("q", {
                 return hasUpgrade("p",33)
             },
         },
-        91: {
-            title:"更多类型2(我也不知道扔哪里，先扔到91吧，总之以后肯定要做的)",
-            description(){return "允许使用你的上夸克能量和下夸克能量加速夸克以对撞粲夸克（胡说八道ing）"},
-            cost: new Decimal("(e^1.79e308) 1"),
+        31: {
+            title:"更多类型2",
+            description(){return "允许使用你的上夸克能量和下夸克能量加速夸克以对撞粲夸克"},
+            cost: new Decimal("1e14"),
             unlocked(){
-                return hasUpgrade("p",33)
+                return hasUpgrade("p",24)
+            },
+        },
+        32: {
+            title:"写升级里确实方便（划掉）",
+            description(){return "基于粲夸克倍增熵<br>当前：x" + format(upgradeEffect("q",32))},
+            cost: new Decimal("2e7"),currencyDisplayName:"粲夸克",currencyInternalName:"cquark",currencyLayer:"q",
+            effect(){
+                return player.q.cquark.add(1).pow(1.3)
+            },
+            unlocked(){
+                return hasUpgrade("p",24)
+            },
+        },
+        33: {
+            title:"是策略，加速没救了",
+            description(){return "解锁夸克研究树（咕咕咕）"},
+            cost: new Decimal("1e16"),
+            unlocked(){
+                return hasUpgrade("p",24)
+            },
+        },
+    },
+    buyables: {
+        11: {
+            title: "夸克研究",
+            cost(x) {
+                let bas = new Decimal(100)
+                return new Decimal(1e16).mul(bas.pow(x))
+            },
+            display() { 
+                let disp = "获得1研究点<br>总计：+" + format(buyableEffect("q",11))
+                disp = disp + "<br>价格：" + format(this.cost()) + "<br>数量：" + format(getBuyableAmount("q",11))
+                return disp
+            },
+            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                player.q.quarkpts = player.q.quarkpts.add(1)
+            },
+            effect(){
+                return getBuyableAmount("q",11)
             },
         },
     },
@@ -583,7 +665,22 @@ addLayer("q", {
                 return hasUpgrade("q",24)
             }
         },
+        32: {
+            title: "对撞粲夸克",
+            display(){return "将你50%的夸克对撞成为奇夸克"},
+            onClick(){
+                player.q.cquark = player.q.cquark.add(player.q.points.div(1e8))
+                player.q.points = player.q.points.mul(0.5)
+            },
+            canClick(){
+                return player.q.points >= 2e8
+            },
+            unlocked(){
+                return hasUpgrade("q",31)
+            }
+        },
     },
+
     passiveGeneration(){
         if(hasUpgrade("q",23)) return 10
         else return 0
