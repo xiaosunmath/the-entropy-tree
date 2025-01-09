@@ -28,6 +28,7 @@ addLayer("p", {
         if(hasUpgrade("u",11)) mult = mult.mul(10)
         if(inChallenge("u",22)) mult = mult.div("1e500")
         if(hasUpgrade("p",33)) mult = mult.mul("1e485")
+        if(getClickableState("q",61) == 1) mult = mult.mul(1e5)
         return mult
     },
     gainExp() {
@@ -72,8 +73,8 @@ addLayer("p", {
             effect(){return player.points.add(2).log(2)},
         },
         14: {
-            title:"禁言天神-666大黑奴",
-            description(){return "基于666大黑奴一次禁言的时间给夸克一个加成(最多29天23小时59分)<br>当前：x" + format(upgradeEffect("p",14))},
+            title:"禁言天神-666大黑",
+            description(){return "基于666大黑奴 役的群里一次禁言的时间给夸克一个加成(最多29天23小时59分)<br>当前：x" + format(upgradeEffect("p",14))},
             cost: new Decimal(1e27),
             effect(){
                 let effe = new Decimal(600)
@@ -182,6 +183,7 @@ addLayer("c", {
     baseAmount() {return player.p.points}, 
     type: "normal",
     exponent: 0.5,
+    branches(){return ["p"]},
     gainMult() {
         mult = new Decimal(1)
         mult = mult.mul(buyableEffect("c",11))
@@ -389,6 +391,7 @@ addLayer("q", {
         squark: new Decimal(0), //懒的打全名了,奇夸克
         cquark: new Decimal(0), //懒的打全名了,粲夸克
         quarkpts: new Decimal(0), //夸克研究点数
+        totalquarkpts: new Decimal(0), //总夸克研究点数
     }},
     color: "#CC00CC",
     requires: new Decimal(1e20),
@@ -397,10 +400,12 @@ addLayer("q", {
     baseAmount() {return player.points},
     type: "normal",
     exponent: 0.1,
+    branches(){return ["c","e"]},
     gainMult() {
         mult = new Decimal(1)
         if(hasUpgrade("q",15)) mult = mult.mul(100)
         if(hasUpgrade("p",14)) mult = mult.mul(upgradeEffect("p",14))
+        if(getClickableState("q",62) == 1) mult = mult.mul(100)
         return mult
     },
     gainExp() {
@@ -438,9 +443,15 @@ addLayer("q", {
             ["display-text",
                 function() {return '你有' + format(player.q.down_quark_energy) + '下夸克能量'},
                {"color": "#FFFFFF", "font-size": "20px", "font-family": "Comic Sans MS"}],
-               "clickables"],},
+            ["row",[["clickable",11],["clickable",12]]],
+            ["row",[["clickable",21],["clickable",22]]],
+            ["row",[["clickable",31],["clickable",32]]],]
+        },
         "升级":{
-            content:[ ["infobox","introBox"],"main-display","prestige-button","upgrades"]
+            content:[ ["infobox","introBox"],"main-display","prestige-button",
+            ["row",[["upgrade",11],["upgrade",12],["upgrade",13],["upgrade",14],["upgrade",15]]],
+            ["row",[["upgrade",21],["upgrade",22],["upgrade",23],["upgrade",24],["upgrade",25]]],
+            ["row",[["upgrade",31],["upgrade",32],["upgrade",33],["upgrade",34],["upgrade",35]]],]
         },
         "夸克统计": {
             content: [
@@ -469,10 +480,14 @@ addLayer("q", {
                 function() {return '你有' + format(player.q.quarkpts) + '夸克研究点数'},
                {"color": "#FFFFFF", "font-size": "15px"}],
             "buyables",
-            ["display-text",
-                function() {return '怎么做一个子标签页一些升级，另一个子标签页一些升级。还有怎么调整可购买的大小qwq'},
-               {"color": "#FFFFFF", "font-size": "20px"}],
-            ],},
+            ["row",[["clickable",41]]],"blank","blank",
+            ["row",[["clickable",51]]],"blank",
+            ["row",[["clickable",61],["clickable",62]]],
+            ],
+            unlocked(){
+                return hasUpgrade("q",33)
+            }
+        },
     },
     upgrades: {
         11: {
@@ -582,6 +597,7 @@ addLayer("q", {
                 return hasUpgrade("p",24)
             },
         },
+        
     },
     buyables: {
         11: {
@@ -600,10 +616,12 @@ addLayer("q", {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
                 player.q.quarkpts = player.q.quarkpts.add(1)
+                player.q.totalquarkpts = player.q.totalquarkpts.add(1)
             },
             effect(){
                 return getBuyableAmount("q",11)
             },
+            style: {'height':'100px'},
         },
     },
     clickables:{
@@ -679,6 +697,79 @@ addLayer("q", {
                 return hasUpgrade("q",31)
             }
         },
+        41: {
+            title: "洗点",
+            display(){return "重置你的夸克研究"},
+            onClick(){
+                for (let i in layers.q.clickables)
+                    if (!["11","12","21","22","31","32","41"].includes(i))
+                        setClickableState("q",i,0)
+                player.q.quarkpts = player.q.totalquarkpts
+            },
+            canClick(){
+                return true
+            },
+        },
+        51: {
+            title:"开始的时候简单一点",
+            display(){return "将熵获得x1e10<br>价格：1夸克研究点"},
+            canClick(){
+                return player.q.quarkpts >= 1 && getClickableState(this.layer,this.id) != 1
+            },
+            onClick(){
+                player.q.quarkpts = player.q.quarkpts.sub(1)
+                setClickableState(this.layer, this.id,1)
+            },
+            style() { 
+                if(getClickableState(this.layer,this.id)==1) return {'background-color' : "#77BF5F"}
+                else{
+                    if(layers.q.clickables[this.id].canClick()) return {'background-color' : "#cc00cc"}
+                    else return {'background-color' : "#BF8F8F"}
+                }
+            },
+        },
+        61: {
+            title:"粒子加成",
+            display(){return "将粒子获得x1e5<br>价格：1夸克研究点"},
+            canClick(){
+                let canc = player.q.quarkpts >= 1 && getClickableState(this.layer,this.id) != 1
+                canc = canc && getClickableState("q",62) == 0
+                return canc
+            },
+            onClick(){
+                player.q.quarkpts = player.q.quarkpts.sub(1)
+                setClickableState(this.layer, this.id,1)
+            },
+            style() { 
+                if(getClickableState(this.layer,this.id)==1) return {'background-color' : "#77BF5F"}
+                else{
+                    if(layers.q.clickables[this.id].canClick()) return {'background-color' : "#cc00cc"}
+                    else return {'background-color' : "#BF8F8F"}
+                }
+            },
+            branches(){return ["51"]}
+        },
+        62: {
+            title:"夸克加成",
+            display(){return "将夸克获得x1e2<br>价格：1夸克研究点"},
+            canClick(){
+                let canc = player.q.quarkpts >= 1 && getClickableState(this.layer,this.id) != 1
+                canc = canc && getClickableState("q",61) == 0
+                return canc
+            },
+            onClick(){
+                player.q.quarkpts = player.q.quarkpts.sub(1)
+                setClickableState(this.layer, this.id,1)
+            },
+            style() { 
+                if(getClickableState(this.layer,this.id)==1) return {'background-color' : "#77BF5F"}
+                else{
+                    if(layers.q.clickables[this.id].canClick()) return {'background-color' : "#cc00cc"}
+                    else return {'background-color' : "#BF8F8F"}
+                }
+            },
+            branches(){return ["51"]}
+        },
     },
 
     passiveGeneration(){
@@ -723,6 +814,7 @@ addLayer("u", {
     exponent: 0.004,
     softcap: new Decimal("1e880"), 
     softcapPower: new Decimal(0.2), 
+    branches(){return ["p","c"]},
     unigain(){
         let gain = new Decimal(0)
         if(hasChallenge("u",12)) gain = gain.add(1)
@@ -1213,6 +1305,7 @@ addLayer("e", {
     baseAmount() {return player.c.points},
     type: "static",
     exponent: 1,
+    branches(){return ["u","c"]},
     autoPrestige(){
         if(hasMilestone("e",1)) return true
         else return false
@@ -1566,6 +1659,7 @@ addLayer("uc", {
     baseAmount() {return player.points},
     type: "normal",
     exponent: 0,
+    branches(){return ["u"]},
     gainMult() {
         mult = new Decimal(1)
         return mult
