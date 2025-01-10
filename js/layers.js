@@ -406,6 +406,8 @@ addLayer("q", {
         if(hasUpgrade("q",15)) mult = mult.mul(100)
         if(hasUpgrade("p",14)) mult = mult.mul(upgradeEffect("p",14))
         if(getClickableState("q",62) == 1) mult = mult.mul(100)
+        if(getClickableState("q",72) == 1) mult = mult.mul(clickableEffect("q",72))
+        if(getClickableState("q",82) == 1) mult = mult.mul(clickableEffect("q",82))
         return mult
     },
     gainExp() {
@@ -414,10 +416,12 @@ addLayer("q", {
     },
     up_quark_energy_gain(){
         let gain = player.q.upquark.pow(2)
+        if(getClickableState("q",91) == 1) gain = gain.pow(2)
         return gain
     },
     down_quark_energy_gain(){
         let gain = player.q.downquark.pow(2)
+        if(getClickableState("q",91) == 1) gain = gain.pow(2)
         return gain
     },
     update(diff){
@@ -482,7 +486,10 @@ addLayer("q", {
             "buyables",
             ["row",[["clickable",41]]],"blank","blank",
             ["row",[["clickable",51]]],"blank",
-            ["row",[["clickable",61],["clickable",62]]],
+            ["row",[["clickable",61],["clickable",62]]],"blank",
+            ["row",[["clickable",71],["clickable",72]]],"blank",
+            ["row",[["clickable",81],["clickable",82]]],"blank",
+            ["row",[["clickable",91]]]
             ],
             unlocked(){
                 return hasUpgrade("q",33)
@@ -732,7 +739,7 @@ addLayer("q", {
             title:"粒子加成",
             display(){return "将粒子获得x1e5<br>价格：1夸克研究点"},
             canClick(){
-                let canc = player.q.quarkpts >= 1 && getClickableState(this.layer,this.id) != 1
+                let canc = player.q.quarkpts >= 1 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",51) == 1
                 canc = canc && getClickableState("q",62) == 0
                 return canc
             },
@@ -753,7 +760,7 @@ addLayer("q", {
             title:"夸克加成",
             display(){return "将夸克获得x1e2<br>价格：1夸克研究点"},
             canClick(){
-                let canc = player.q.quarkpts >= 1 && getClickableState(this.layer,this.id) != 1
+                let canc = player.q.quarkpts >= 1 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",51) == 1
                 canc = canc && getClickableState("q",61) == 0
                 return canc
             },
@@ -769,6 +776,118 @@ addLayer("q", {
                 }
             },
             branches(){return ["51"]}
+        },
+        71: {
+            title:"熵加成",
+            display(){return "基于夸克进一步倍增熵<br>价格：2夸克研究点<br>效果：x" + format(this.effect())},
+            effect(){
+                return player.q.points.add(1).root(3)
+            },
+            canClick(){
+                let canc = player.q.quarkpts >= 2 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",61) == 1
+                return canc
+            },
+            onClick(){
+                player.q.quarkpts = player.q.quarkpts.sub(2)
+                setClickableState(this.layer, this.id,1)
+            },
+            style() { 
+                if(getClickableState(this.layer,this.id)==1) return {'background-color' : "#77BF5F"}
+                else{
+                    if(layers.q.clickables[this.id].canClick()) return {'background-color' : "#cc00cc"}
+                    else return {'background-color' : "#BF8F8F"}
+                }
+            },
+            branches(){return ["61"]}
+        },
+        72: {
+            title:"夸克加成",
+            display(){return "基于粒子倍增夸克<br>价格：2夸克研究点<br>效果：x" + format(this.effect())},
+            effect(){
+                return player.p.points.add(1).log(10).mul(5).add(1)
+            },
+            canClick(){
+                let canc = player.q.quarkpts >= 2 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",62) == 1
+                return canc
+            },
+            onClick(){
+                player.q.quarkpts = player.q.quarkpts.sub(2)
+                setClickableState(this.layer, this.id,1)
+            },
+            style() { 
+                if(getClickableState(this.layer,this.id)==1) return {'background-color' : "#77BF5F"}
+                else{
+                    if(layers.q.clickables[this.id].canClick()) return {'background-color' : "#cc00cc"}
+                    else return {'background-color' : "#BF8F8F"}
+                }
+            },
+            branches(){return ["62"]}
+        },
+        81: {
+            title:"上夸克能量",
+            display(){return "基于上夸克能量进一步倍增熵<br>价格：2夸克研究点<br>效果：x" + format(this.effect())},
+            effect(){
+                return player.q.up_quark_energy.add(1).root(4)
+            },
+            canClick(){
+                let canc = player.q.quarkpts >= 2 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",71) == 1
+                return canc
+            },
+            onClick(){
+                player.q.quarkpts = player.q.quarkpts.sub(2)
+                setClickableState(this.layer, this.id,1)
+            },
+            style() { 
+                if(getClickableState(this.layer,this.id)==1) return {'background-color' : "#77BF5F"}
+                else{
+                    if(layers.q.clickables[this.id].canClick()) return {'background-color' : "#cc00cc"}
+                    else return {'background-color' : "#BF8F8F"}
+                }
+            },
+            branches(){return ["71"]}
+        },
+        82: {
+            title:"下夸克能量",
+            display(){return "基于下夸克能量倍增夸克<br>价格：2夸克研究点<br>效果：x" + format(this.effect())},
+            effect(){
+                return player.q.down_quark_energy.add(1).log(2).mul(3).add(1)
+            },
+            canClick(){
+                let canc = player.q.quarkpts >= 2 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",72) == 1
+                return canc
+            },
+            onClick(){
+                player.q.quarkpts = player.q.quarkpts.sub(2)
+                setClickableState(this.layer, this.id,1)
+            },
+            style() { 
+                if(getClickableState(this.layer,this.id)==1) return {'background-color' : "#77BF5F"}
+                else{
+                    if(layers.q.clickables[this.id].canClick()) return {'background-color' : "#cc00cc"}
+                    else return {'background-color' : "#BF8F8F"}
+                }
+            },
+            branches(){return ["72"]}
+        },
+        91: {
+            title:"公式改进",
+            display(){return "让上夸克能量和下夸克能量的获得公式更好<br>价格：2夸克研究点"},
+            canClick(){
+                let canc = player.q.quarkpts >= 2 && getClickableState(this.layer,this.id) != 1 && (getClickableState("q",71) == 1 || getClickableState("q",72) == 1)
+                return canc
+            },
+            onClick(){
+                player.q.quarkpts = player.q.quarkpts.sub(2)
+                setClickableState(this.layer, this.id,1)
+            },
+            style() { 
+                if(getClickableState(this.layer,this.id)==1) return {'background-color' : "#77BF5F"}
+                else{
+                    if(layers.q.clickables[this.id].canClick()) return {'background-color' : "#cc00cc"}
+                    else return {'background-color' : "#BF8F8F"}
+                }
+            },
+            branches(){return ["81","82"]}
         },
     },
 
@@ -1329,6 +1448,7 @@ addLayer("e", {
     elegain(){
         let gain = player.e.points.pow(3).div(100)
         let bas = new Decimal(2)
+        if(hasUpgrade("uc",13)) bas = bas.add(1)
         if(hasUpgrade("e",15)) gain = bas.pow(player.e.points.div(2))
         if(hasUpgrade("e",11)) gain = gain.mul(upgradeEffect("e",11))
         if(hasUpgrade("e",12)) gain = gain.mul(upgradeEffect("e",12))
@@ -1689,6 +1809,11 @@ addLayer("uc", {
                 if(inChallenge("u",22)) return player.u.uni.add(1).log(10).add(1).root(2)
                 else return player.u.uni.add(1).log(10).add(1).pow(200)
             },
+        },
+        13: {
+            title:"升级3",
+            description(){return "元素合成器效果底数+1"},
+            cost: new Decimal(1e200),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
         },
     },
     row: 999,

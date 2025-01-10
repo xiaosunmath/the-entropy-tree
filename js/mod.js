@@ -13,12 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.4",
-	name: "憋憋",
+	num: "0.3.4.1",
+	name: "好的，数值突破1e10000超过99%的增量游戏（doge）",
 }
 
 let changelog = `
 	<h1>Changelog:</h1><br>
+	<h3>v0.3.4.1</h3><br>
+		-添加6个升级<br>
 	<h3>v0.3.4</h3><br>
 		-添加3个升级<br>
 		-连了一下线<br>
@@ -138,6 +140,9 @@ function getPointGen() {
 	if(hasUpgrade("q",32)) gain = gain.mul(upgradeEffect("q",32))
 
 	if(getClickableState("q",51) == 1) gain = gain.mul(1e10)
+	if(getClickableState("q",71) == 1) gain = gain.mul(clickableEffect("q",71))
+	if(getClickableState("q",81) == 1) gain = gain.mul(clickableEffect("q",81))
+	
 	if(hasUpgrade("uc",12)) gain = gain.mul(upgradeEffect("uc",12))
 	
 	return gain
@@ -149,12 +154,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = ["手痒痒，想给熵一个软上限",
-	"endgame：总计4夸克研究点"
+	"endgame：1e10000熵"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return getBuyableAmount("q",11).gte(new Decimal("4"))
+	return player.points.gte(new Decimal("1e10000"))
 }
 
 
