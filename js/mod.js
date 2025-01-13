@@ -13,12 +13,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.4.1",
-	name: "好的，数值突破1e10000超过99%的增量游戏（doge）",
+	num: "0.3.5",
+	name: "我可是伟大的平衡之神，任何暴涨都能轻易压制",
 }
 
 let changelog = `
 	<h1>Changelog:</h1><br>
+	<h3>v0.3.5</h3><br>
+		-添加7个升级<br>
 	<h3>v0.3.4.1</h3><br>
 		-添加6个升级<br>
 	<h3>v0.3.4</h3><br>
@@ -142,9 +144,14 @@ function getPointGen() {
 	if(getClickableState("q",51) == 1) gain = gain.mul(1e10)
 	if(getClickableState("q",71) == 1) gain = gain.mul(clickableEffect("q",71))
 	if(getClickableState("q",81) == 1) gain = gain.mul(clickableEffect("q",81))
+	if(getClickableState("q",102) == 1) gain = gain.mul(clickableEffect("q",102))
 	
 	if(hasUpgrade("uc",12)) gain = gain.mul(upgradeEffect("uc",12))
 	
+	let sc1pow = new Decimal(2)
+	let scstart = new Decimal("1.79e308")
+	if(getClickableState("q",101) == 1) sc1pow = sc1pow.mul(one.sub(clickableEffect("q",101).div(100)))
+	if(gain.max(scstart) == gain && inChallenge("u",22)) gain = gain.div(scstart).root(sc1pow).mul(scstart)
 	return gain
 }
 
@@ -153,13 +160,14 @@ function addedPlayerData() { return {
 }}
 
 // Display extra things at the top of the page
-var displayThings = ["手痒痒，想给熵一个软上限",
-	"endgame：1e10000熵"
+var displayThings = ["当你在u层挑战4且熵获得超过1.79e308时，熵获得量超出1.79e308的部分被平方根",
+	"endgame：购买q层升级35"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e10000"))
+	//return player.points.gte(new Decimal("1e10000"))
+	return hasUpgrade("q",35)
 }
 
 
