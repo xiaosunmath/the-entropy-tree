@@ -1,3 +1,234 @@
+addLayer("a", {
+    infoboxes:{
+        introBox:{
+            title:"💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩",
+            body(){
+                return "💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩<br>💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩<br>💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩<br>💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩<br>💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩<br>💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩<br>💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩<br>💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩<br>💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩<br>💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩💩<br>😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭"
+            }
+        },
+        fuckBox:{
+            title:"你跌来了",
+            body(){
+                return "看到这里没笑的就是神人，我要傻掉你😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>😡<br>"
+            }
+        },
+    },
+    name: "成就",
+    symbol: "成<br>就<br>🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣",
+    position: 0,
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#FFFF00",
+    resource: "成就",
+    tabFormat: {
+        "成就🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣": {
+            content: [ ["infobox","introBox"],"main-display","prestige-button","achievements"],},
+        "抽象大帝发力了": {
+            content: [ ["infobox","fuckBox"]],
+        },
+    },
+    achievements: {
+        11:{
+            name: "傻逼之💩",
+            done() {return player.p.points.gte(1)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "获得你第一个粒子", 
+            textStyle: {'color': '#00FFFF'},
+        },
+        12:{
+            name: "2逼之💩",
+            done() {return player.p.points.gte(1000)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "获得你第一千个粒子", 
+            textStyle: {'color': '#88DD44'},
+        },
+        13:{
+            name: "💩之恒星",
+            done() {return player.c.points.gte(1)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "获得你第一个天体", 
+            textStyle: {'color': '#FFFF00'},
+        },
+        14:{
+            name: "💩中的生命",
+            done() {return getBuyableAmount("c",12).gte(1)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "获得你第一个生命", 
+            textStyle: {'color': '#FFFF00'},
+        },
+        15:{
+            name: "💩膨胀了",
+            done() {return hasUpgrade("c",14)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "获得第4个天体升级", 
+            textStyle: {'color': '#FFFF00'},
+        },
+        21:{
+            name: "💩之极致",
+            done() {return player.u.points.gte(1)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "获得一个被核弹炸死的宇宙(第2行)", 
+            textStyle: {'color': '#999999'},
+        },
+        22:{
+            name: "越来越💩",
+            done() {return hasUpgrade("u",22)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "解锁傻逼宇宙力量", 
+            textStyle: {'color': '#999999'},
+        },
+        23:{
+            name: "💩之合成",
+            done() {return player.e.points.gte(1)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "解锁元素合成器", 
+            textStyle: {'color': '#DD55DD'},
+        },
+        24:{
+            name: "💩之增重",
+            done() {return player.c.mass.gte(1)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "解锁恒星质量", 
+            textStyle: {'color': '#DD55DD'},
+        },
+        25:{
+            name: "💩爆炸了",
+            done() {return hasUpgrade("e",24)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "解锁元素裂变", 
+            textStyle: {'color': '#DD55DD'},
+        },
+        31:{
+            name: "加热你的💩",
+            done() {return hasUpgrade("e",33)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "解锁宇宙微波辐射温度", 
+            textStyle: {'color': '#999999'},
+        },
+        32:{
+            name: "💩的裂变",
+            done() {return hasUpgrade("u",42)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "解锁挑战“强制裂变”", 
+            textStyle: {'color': '#999999'},
+        },
+        33:{
+            name: "💩的微观",
+            done() {return player.q.points.gte(1)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "获得第一个夸克", 
+            textStyle: {'color': '#CC00CC'},
+        },
+        34:{
+            name: "什么？💩的裂变增强升级",
+            done() {return hasUpgrade("uc",11)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "获得uc层的升级", 
+            textStyle: {'color': '#FFFFFF'},
+        },
+        35:{
+            name: "💩的多样化",
+            done() {return hasUpgrade("q",31)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "获得能获取奇夸克和粲夸克的能力", 
+            textStyle: {'color': '#CC00CC'},
+        },
+        41:{
+            name: "💩之策略",
+            done() {return hasUpgrade("q",33)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "解锁夸克研究树", 
+            textStyle: {'color': '#CC00CC'},
+        },
+        42:{
+            name: "完整的💩策略",
+            done() {return getClickableState("q",111)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "可以购买完整的夸克研究树", 
+            textStyle: {'color': '#CC00CC'},
+        },
+        43:{
+            name: "6倍💩",
+            done() {return hasUpgrade("q",35)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "可以获得顶夸克和底夸克", 
+            textStyle: {'color': '#CC00CC'},
+        },
+    },
+    row: "side",
+    
+    layerShown(){return true}
+})
+addLayer("sb", {
+    infoboxes:{
+        startBox:{
+            title:"开始❌❌❌❌❌❌❌",
+            body(){
+                return "你这个傻逼，来到宇宙后让宇宙开始变的混乱"
+            }
+        },
+        parBox:{
+            title:"粒子",
+            body(){
+                return "你让一个粒子脱离了秩序，罪大恶极"
+            }
+        },
+        celBox:{
+            title:"天体",
+            body(){
+                return "你撼动了一个天体，这引起了注视"
+            }
+        },
+        uniBox:{
+            title:"宇宙",
+            body(){
+                return "你击破了一个宇宙，多元宇宙之神非常好奇"
+            }
+        },
+        eleBox:{
+            title:"元素",
+            body(){
+                return "你获得了操控元素的力量"
+            }
+        },
+        chalBox:{
+            title:"挑战",
+            body(){
+                return "你被多元宇宙之神压制了，但是你能找到出路"
+            }
+        },
+        quarkBox:{
+            title:"夸克",
+            body(){
+                return "你转身向微观进军，效果甚佳"
+            }
+        },
+    },
+    name: "剧情",
+    symbol: "剧情😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡",
+    position: 1,
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#FFFF00",
+    resource: "剧情",
+    tabFormat: {
+        "剧情😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡": {
+            content: [ ["infobox","startBox"],
+            ["infobox","parBox"],
+            ["infobox","celBox"],
+            ["infobox","uniBox"],
+            ["infobox","eleBox"],
+            ["infobox","chalBox"],
+            ["infobox","quarkBox"],],},
+    },
+    row: "side",
+    
+    layerShown(){return true}
+})
 addLayer("p", {
     infoboxes:{
         introBox:{
@@ -983,7 +1214,7 @@ addLayer("q", {
         },
         101: {
             title:"软上限弱化",
-            display(){return "基于夸克弱化熵的软上限(最多50%)<br>价格：8夸克研究点<br>当前效果：弱化" + format(clickableEffect("q",101)) + "%"},
+            display(){return "基于夸克弱化熵的软上限(最多50%)(傻逼懒的改了)<br>价格：8夸克研究点<br>当前效果：弱化" + format(clickableEffect("q",101)) + "%"},
             effect(){
                 return player.q.points.add(1).log(10).div(2).add(1).min(50)
             },
@@ -1382,7 +1613,7 @@ addLayer("u", {
         },
         35: {
             title:"傻逼之力量",
-            description(){return "解锁一个新的可购买"},
+            description(){return "解锁一个新的可购买,并且解锁一个新层级"},
             cost: new Decimal(1e23),
             unlocked(){
                 if(hasUpgrade("u",34)) return true
