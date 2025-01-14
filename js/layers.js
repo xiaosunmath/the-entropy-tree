@@ -173,36 +173,54 @@ addLayer("sb", {
             title:"粒子",
             body(){
                 return "你让一个粒子脱离了秩序，罪大恶极"
+            },
+            unlocked(){
+                return player.p.points.gte(1)
             }
         },
         celBox:{
             title:"天体",
             body(){
                 return "你撼动了一个天体，这引起了注视"
+            },
+            unlocked(){
+                return player.c.points.gte(1)
             }
         },
         uniBox:{
             title:"宇宙",
             body(){
-                return "你击破了一个宇宙，多元宇宙之神非常好奇"
+                return "你击破了一个宇宙，多元宇宙之神非常愤怒😡😡😡😡😡😡"
+            },
+            unlocked(){
+                return player.u.points.gte(1)
             }
         },
         eleBox:{
             title:"元素",
             body(){
                 return "你获得了操控元素的力量"
+            },
+            unlocked(){
+                return player.e.points.gte(1)
             }
         },
         chalBox:{
             title:"挑战",
             body(){
                 return "你被多元宇宙之神压制了，但是你能找到出路"
+            },
+            unlocked(){
+                return hasUpgrade("u",42)
             }
         },
         quarkBox:{
             title:"夸克",
             body(){
                 return "你转身向微观进军，效果甚佳"
+            },
+            unlocked(){
+                return player.q.points.gte(1) || hasAchievement("a",33)
             }
         },
     },

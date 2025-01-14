@@ -160,8 +160,15 @@ function addedPlayerData() { return {
 }}
 
 // Display extra things at the top of the page
-var displayThings = ["当你在u层挑战4且熵获得超过1.79e308时，熵获得量超出1.79e308的部分被平方根",
-	"当你在u层挑战4且熵获得超过1e1000时，熵获得量超出1e1000的部分被平方根",
+var displayThings = [
+	function(){
+		if(inChallenge("u",22))
+			return "你的熵获得超过1.79e308时，超出1.79e308的部分被平方根"
+	},
+	function(){
+		if(inChallenge("u",22))
+			return "你的熵获得超过1e1000时，超出1e1000的部分被平方根"
+	},
 	"endgame：购买q层升级35"
 ]
 
