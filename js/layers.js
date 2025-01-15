@@ -404,7 +404,7 @@ addLayer("p", {
             if(resettingLayer == "e" && hasMilestone("e",0)){
                 kept.push("upgrades")
             }
-            if(resettingLayer == "u" && hasMilestone("e",0)){
+            if(resettingLayer == "u" && hasMilestone("u",0)){
                 kept.push("upgrades")
             }
             layerDataReset(this.layer,kept)
@@ -605,7 +605,7 @@ addLayer("c", {
                 kept.push("upgrades")
                 kept.push("milestones")
             }
-            if(resettingLayer == "u" && hasMilestone("e",0)){
+            if(resettingLayer == "u" && hasMilestone("u",0)){
                 kept.push("upgrades")
                 kept.push("milestones")
             }
@@ -1590,7 +1590,7 @@ addLayer("u", {
             ["display-text",
                 function() {return '当一次重置获得的宇宙数量超过1e880时，超出部分将被5次根'},
                {"color": "#FFFFFF", "font-size": "20px" }],
-               "upgrades"],},
+               "milestones","upgrades"],},
         "令人嗝屁的界面": {
             content: [ ["infobox","introBox"],"main-display","challenges"],
             unlocked(){return hasUpgrade('u',14)}
@@ -1836,6 +1836,13 @@ addLayer("u", {
                 else return false
             }
         },
+    },
+    milestones: {
+        0:{
+            requirementDescription: "5宇宙",
+            effectDescription: "宇宙重置不重置第一行升级",
+            done() { return player.u.points.gte(5) }
+        }
     },
     buyables: {
         11: {
@@ -2297,7 +2304,7 @@ addLayer("e", {
     milestones: {
         0: {
             requirementDescription: "10元素合成器",
-            effectDescription: "在第二行重置时保留第一行的升级和里程碑",
+            effectDescription: "在元素重置时保留第一行的升级和里程碑",
             done() { return player.e.points.gte(10) }
         },
         1: {
