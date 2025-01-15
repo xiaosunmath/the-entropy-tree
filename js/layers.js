@@ -31,14 +31,14 @@ addLayer("a", {
     },
     achievements: {
         11:{
-            name: "傻逼之💩",
+            name: "第一个💩",
             done() {return player.p.points.gte(1)}, 
             onComplete(){player.a.points=player.a.points.add(1)},
             tooltip: "获得你第一个粒子", 
             textStyle: {'color': '#00FFFF'},
         },
         12:{
-            name: "2逼之💩",
+            name: "千倍之💩",
             done() {return player.p.points.gte(1000)}, 
             onComplete(){player.a.points=player.a.points.add(1)},
             tooltip: "获得你第一千个粒子", 
@@ -69,14 +69,14 @@ addLayer("a", {
             name: "💩之极致",
             done() {return player.u.points.gte(1)}, 
             onComplete(){player.a.points=player.a.points.add(1)},
-            tooltip: "获得一个被核弹炸死的宇宙(第2行)", 
+            tooltip: "获得一个宇宙(第2行)", 
             textStyle: {'color': '#999999'},
         },
         22:{
             name: "越来越💩",
             done() {return hasUpgrade("u",22)}, 
             onComplete(){player.a.points=player.a.points.add(1)},
-            tooltip: "解锁傻逼宇宙力量", 
+            tooltip: "解锁宇宙力量", 
             textStyle: {'color': '#999999'},
         },
         23:{
@@ -180,7 +180,7 @@ addLayer("sb", {
         startBox:{
             title:"开始❌❌❌❌❌❌❌",
             body(){
-                return "你这个傻逼，来到宇宙后让宇宙开始变的混乱"
+                return "你这个，来到宇宙后让宇宙开始变的混乱"
             }
         },
         parBox:{
@@ -777,8 +777,8 @@ addLayer("q", {
                 function() {return '你有' + format(player.q.quarkpts) + '夸克研究点数'},
                {"color": "#FFFFFF", "font-size": "15px"}],
             ["display-text",
-                function() {return '我就tm后悔写这玩意'},
-               {"color": "#FF0000", "font-size": "15px"}],
+                function() {return '太难写了qwq'},
+               {"color": "#FFFFFF", "font-size": "15px"}],
             ["row",[["buyable",11],["buyable",12]]],
             ["row",[["clickable",41]]],"blank","blank",
             ["row",[["clickable",51]]],"blank",
@@ -1382,7 +1382,7 @@ addLayer("q", {
         },
         101: {
             title:"软上限弱化",
-            display(){return "基于夸克弱化熵的软上限(最多50%)(傻逼懒的改了)<br>价格：8夸克研究点<br>当前效果：弱化" + format(clickableEffect("q",101)) + "%"},
+            display(){return "基于夸克弱化熵的软上限(最多50%)(懒的改了)<br>价格：8夸克研究点<br>当前效果：弱化" + format(clickableEffect("q",101)) + "%"},
             effect(){
                 return player.q.points.add(1).log(10).div(2).add(1).min(50)
             },
@@ -1533,7 +1533,7 @@ addLayer("u", {
             }
         },
     },
-    name: "被核弹炸死的宇宙",
+    name: "宇宙",
     symbol: "u",
     position: 0,
     startData() { return {
@@ -1546,7 +1546,7 @@ addLayer("u", {
     }},
     color: "#999999",
     requires: new Decimal(1e120),
-    resource: "被核弹炸死的宇宙",
+    resource: "宇宙",
     baseResource: "熵",
     baseAmount() {return player.points},
     type: "normal",
@@ -1588,23 +1588,23 @@ addLayer("u", {
         "面": {
             content: [ ["infobox","introBox"],"main-display","prestige-button",
             ["display-text",
-                function() {return '当一次重置获得的被核弹炸死的宇宙数量超过1e880时，超出部分将被5次根'},
+                function() {return '当一次重置获得的宇宙数量超过1e880时，超出部分将被5次根'},
                {"color": "#FFFFFF", "font-size": "20px" }],
                "upgrades"],},
         "令人嗝屁的界面": {
             content: [ ["infobox","introBox"],"main-display","challenges"],
             unlocked(){return hasUpgrade('u',14)}
         },
-        "傻逼之力量": {
+        "宇宙之力量": {
             content: [["display-text",
-                function() {return '你有' + format(player.u.uni) + '傻逼宇宙力量'},
+                function() {return '你有' + format(player.u.uni) + '宇宙力量'},
                {"color": "#FFFFFF", "font-size": "20px" }],
                 "buyables"],
             unlocked(){return hasChallenge("u",12)}
         },
         "温度": {
             content: [["display-text",
-                function() {return '宇宙的微波背景辐射温度为' + format(player.u.temperature) + '开尔文,将傻逼宇宙力量和熵提高到' + format(player.u.temeffect) + "次方"},
+                function() {return '宇宙的微波背景辐射温度为' + format(player.u.temperature) + '开尔文,将宇宙力量和熵提高到' + format(player.u.temeffect) + "次方"},
                {"color": "#FFFFFF", "font-size": "20px" }],
                "clickables"],
             unlocked(){return hasUpgrade("e",33)}
@@ -1615,7 +1615,7 @@ addLayer("u", {
     upgrades: {
         11: {
             title:"描述描述你的宇宙被毁灭了",
-            description(){return "你的宇宙被10^1145141919810个核弹炸死了，并且被10^9*10^15反物质炸的死的不能再死了，而且被K9e15攻击的恐怖鳗鱼打成了傻逼。所以宇宙要进行复仇，使你的熵，粒子，天体数量x10,并且使你的熵^1.02(下一个升级在3被核弹炸死的宇宙)<br>"},
+            description(){return "你的宇宙被10^1145141919810个核弹炸死了，并且被10^9*10^15反物质炸的死的不能再死了，而且被K9e15攻击的恐怖鳗鱼打成了。所以宇宙要进行复仇，使你的熵，粒子，天体数量x10,并且使你的熵^1.02(下一个升级在3宇宙)<br>"},
             cost: new Decimal(0),
             unlocked(){
                 if(player.u.points > 0) return true
@@ -1624,7 +1624,7 @@ addLayer("u", {
         },
         12: {
             title:"你的宇宙觉得自己屌爆了",
-            description(){return "宇宙被作者制裁了，所以只能让你的熵^1.1(下一个升级在10被核弹炸死的宇宙)<br>"},
+            description(){return "宇宙被作者制裁了，所以只能让你的熵^1.1(下一个升级在10宇宙)<br>"},
             cost: new Decimal(0),
             unlocked(){
                 if(player.u.points > 2) return true
@@ -1659,10 +1659,10 @@ addLayer("u", {
             }
         },
         21: {
-            title:"被核弹炸死的宇宙太fvv了",
+            title:"宇宙太fvv了",
             description(){
-                if(!hasUpgrade("e",22)) return "使你的被核弹炸死的宇宙将熵提高<br>当前效果：^" + format(upgradeEffect("u",21))
-                else return "使你的被核弹炸死的宇宙倍增恒星质量和超重元素获取<br>当前效果：x" + format(upgradeEffect("u",21))
+                if(!hasUpgrade("e",22)) return "使你的宇宙将熵提高<br>当前效果：^" + format(upgradeEffect("u",21))
+                else return "使你的宇宙倍增恒星质量和超重元素获取<br>当前效果：x" + format(upgradeEffect("u",21))
             },
             cost: new Decimal(0),
             effect(){
@@ -1695,16 +1695,16 @@ addLayer("u", {
         23: {
             title:"宇宙的智商跌破-250^2",
             description(){return "让宇宙IQ倍减价格基数-1"},
-            cost: new Decimal(2e7),currencyDisplayName:"傻逼宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
+            cost: new Decimal(2e7),currencyDisplayName:"宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
             unlocked(){
                 if(hasChallenge("u",12)) return true
                 else return false
             },
         },
         24: {
-            title:"傻逼宇宙协同",
-            description(){return "基于你的被核弹炸死的宇宙增加傻逼宇宙力量获取<br>当前:x" + format(upgradeEffect("u",24))},
-            cost: new Decimal(5e16),currencyDisplayName:"傻逼宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
+            title:"宇宙协同",
+            description(){return "基于你的宇宙增加宇宙力量获取<br>当前:x" + format(upgradeEffect("u",24))},
+            cost: new Decimal(5e16),currencyDisplayName:"宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
             effect(){
                 return player.u.points.add(1).log(2).pow(2)
             },
@@ -1714,9 +1714,9 @@ addLayer("u", {
             },
         },
         25: {
-            title:"作者这个傻逼终于按QoL了，不得给多亿点",
-            description(){return "每秒获得10000%的被核弹炸死的宇宙"},
-            cost: new Decimal(1e27),currencyDisplayName:"傻逼宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
+            title:"作者这个终于按QoL了，不得给多亿点",
+            description(){return "每秒获得10000%的宇宙"},
+            cost: new Decimal(1e27),currencyDisplayName:"宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
             unlocked(){
                 if(hasUpgrade("u",24)) return true
                 else return false
@@ -1733,7 +1733,7 @@ addLayer("u", {
         },
         31: {
             title:"粒子宇宙",
-            description(){return "基于粒子数量增加被核弹炸死的宇宙的指数<br>当前：+" + format(upgradeEffect("u",31))},
+            description(){return "基于粒子数量增加宇宙的指数<br>当前：+" + format(upgradeEffect("u",31))},
             cost: new Decimal(1e8),
             effect(){
                 return player.p.points.add(1).log(10).root(2).div(30)
@@ -1745,7 +1745,7 @@ addLayer("u", {
         },
         32: {
             title:"天体宇宙",
-            description(){return "基于天体数量增加被核弹炸死的宇宙的指数<br>当前：+" + format(upgradeEffect("u",32))},
+            description(){return "基于天体数量增加宇宙的指数<br>当前：+" + format(upgradeEffect("u",32))},
             cost: new Decimal(1e12),
             effect(){
                 return player.c.points.add(1).log(10).root(2).div(30)
@@ -1757,7 +1757,7 @@ addLayer("u", {
         },
         33: {
             title:"宇宙自增",
-            description(){return "基于被核弹炸死的宇宙数量增加被核弹炸死的宇宙的指数<br>当前：+" + format(upgradeEffect("u",33))},
+            description(){return "基于宇宙数量增加宇宙的指数<br>当前：+" + format(upgradeEffect("u",33))},
             cost: new Decimal(1e15),
             effect(){
                 return player.u.points.add(1).log(10).root(3).div(3)
@@ -1768,8 +1768,8 @@ addLayer("u", {
             },
         },
         34: {
-            title:"傻逼宇宙力量倍增",
-            description(){return "基于被核弹炸死的宇宙数量乘以傻逼宇宙力量<br>当前：×" + format(upgradeEffect("u",34))},
+            title:"宇宙力量倍增",
+            description(){return "基于宇宙数量乘以宇宙力量<br>当前：×" + format(upgradeEffect("u",34))},
             cost: new Decimal(1e18),
             effect(){
                 return player.u.points.add(1).root(3)
@@ -1780,7 +1780,7 @@ addLayer("u", {
             },
         },
         35: {
-            title:"傻逼之力量",
+            title:"之力量",
             description(){return "解锁一个新的可购买,并且解锁一个新层级"},
             cost: new Decimal(1e23),
             unlocked(){
@@ -1790,8 +1790,8 @@ addLayer("u", {
         },
         41: {
             title:"力量",
-            description(){return "让傻逼宇宙力量倍增超重元素获得<br>当前：x" + format(upgradeEffect("u",41))},
-            cost: new Decimal("1e2500"),currencyDisplayName:"傻逼宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
+            description(){return "让宇宙力量倍增超重元素获得<br>当前：x" + format(upgradeEffect("u",41))},
+            cost: new Decimal("1e2500"),currencyDisplayName:"宇宙力量",currencyInternalName:"uni",currencyLayer:"u",
             effect(){
                 return player.u.uni.add(1).log(10).pow(2)
             },
@@ -1848,7 +1848,7 @@ addLayer("u", {
                 return new Decimal(10).mul(bas.pow(x.pow(1.1)))
             },
             display() { 
-                let disp = "增加傻逼宇宙力量获得<br>当前：x" + format(buyableEffect("u",11))
+                let disp = "增加宇宙力量获得<br>当前：x" + format(buyableEffect("u",11))
                 //if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost())
                 if(getBuyableAmount("u",11).sub(300) > 0) disp = disp + "（折算）"
@@ -1882,7 +1882,7 @@ addLayer("u", {
                 return new Decimal(1e33).mul(bas.pow(x.pow(1.05)))
             },
             display() { 
-                let disp = "基于傻逼宇宙力量增加傻逼宇宙力量获得<br>当前：x" + format(buyableEffect("u",12))
+                let disp = "基于宇宙力量增加宇宙力量获得<br>当前：x" + format(buyableEffect("u",12))
                 //if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost())
                 if(getBuyableAmount("u",12).sub(300) > 0) disp = disp + "（折算）"
@@ -1916,7 +1916,7 @@ addLayer("u", {
                 return new Decimal("1e600").mul(bas.pow(x.pow(1.1)))
             },
             display() { 
-                let disp = "基于被核弹炸死的宇宙增加傻逼宇宙力量获得<br>当前：x" + format(buyableEffect("u",13))
+                let disp = "基于宇宙增加宇宙力量获得<br>当前：x" + format(buyableEffect("u",13))
                 //if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost())
                 if(getBuyableAmount("u",13).sub(300) > 0) disp = disp + "（折算）"
@@ -1971,7 +1971,7 @@ addLayer("u", {
             challengeDescription: "天体指数/5",
             goalDescription: "目标：1e48熵",
             canComplete: function() {return player.points.gte(1e48)},
-            rewardDescription: "宇宙表示已老实求放过，解锁傻逼宇宙力量",
+            rewardDescription: "宇宙表示已老实求放过，解锁宇宙力量",
             unlocked(){
                 if(hasUpgrade("u",22)) return true
                 else return false
@@ -1983,7 +1983,7 @@ addLayer("u", {
             goalDescription: "目标：9999999999999999999999999999999999熵（不信可以自己数）",
             canComplete: function() {return player.points.gte(1e35)},
             rewardDescription() {
-                return "傻逼宇宙力量好像没用，让它加成一下被核弹炸死的宇宙的指数<br>当前：+" + format(challengeEffect("u",21))
+                return "宇宙力量好像没用，让它加成一下宇宙的指数<br>当前：+" + format(challengeEffect("u",21))
             },
             rewardEffect(){
                 return player.u.uni.log(10).root(2).div(10)
@@ -2160,7 +2160,7 @@ addLayer("e", {
     upgrades: {
         11: {
             title:"效率",
-            description(){return "基于你的被核弹炸死的宇宙倍增超重元素获取<br>当前:x" + format(upgradeEffect("e",11))},
+            description(){return "基于你的宇宙倍增超重元素获取<br>当前:x" + format(upgradeEffect("e",11))},
             cost: new Decimal(30),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
             effect(){
                 return player.u.points.add(1).log(10).div(10)
@@ -2172,7 +2172,7 @@ addLayer("e", {
         },
         12: {
             title:"继续加速",
-            description(){return "基于傻逼宇宙力量倍增超重元素获得<br>当前：x" + format(upgradeEffect("e",12))},
+            description(){return "基于宇宙力量倍增超重元素获得<br>当前：x" + format(upgradeEffect("e",12))},
             cost: new Decimal(1000),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
             effect(){
                 return player.u.uni.add(1).log(10).div(100)
@@ -2184,7 +2184,7 @@ addLayer("e", {
         },
         13: {
             title:"反增益",
-            description(){return "基于超重元素倍增被核弹炸死的宇宙和傻逼宇宙力量获得<br>当前：x" + format(upgradeEffect("e",13))},
+            description(){return "基于超重元素倍增宇宙和宇宙力量获得<br>当前：x" + format(upgradeEffect("e",13))},
             cost: new Decimal(15000),currencyDisplayName:"超重元素",currencyInternalName:"ele",currencyLayer:"e",
             effect(){
                 return player.e.ele.add(1)
@@ -2423,7 +2423,7 @@ addLayer("uc", {
         },
         12: {
             title:"升级2",
-            description(){return "基于傻逼宇宙力量倍增熵获取(在uc4中被削弱)<br>当前：x" + format(upgradeEffect("uc",12))},
+            description(){return "基于宇宙力量倍增熵获取(在uc4中被削弱)<br>当前：x" + format(upgradeEffect("uc",12))},
             cost: new Decimal(1e60),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
             effect(){
                 if(inChallenge("u",22)) return player.u.uni.add(1).log(10).add(1).root(2)
