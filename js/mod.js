@@ -13,12 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.5",
+	num: "0.3.5.1",
 	name: "我可是伟大的平衡之神，任何暴涨都能轻易压制",
 }
 
 let changelog = `
 	<h1>Changelog:</h1><br>
+	<h3>v0.3.5.1</h3><br>
+		-添加5个升级<br>
+		-添加2个可购买<br>
+	<h3>v0.3.5+</h3><br>
+		-添加了成就+剧情<br>
 	<h3>v0.3.5</h3><br>
 		-添加7个升级<br>
 	<h3>v0.3.4.1</h3><br>
@@ -149,9 +154,12 @@ function getPointGen() {
 	if(hasUpgrade("uc",12)) gain = gain.mul(upgradeEffect("uc",12))
 	
 	let sc1pow = new Decimal(2)
-	let scstart = new Decimal("1.79e308")
+	let sc1start = new Decimal("1.79e308")
 	if(getClickableState("q",101) == 1) sc1pow = sc1pow.mul(one.sub(clickableEffect("q",101).div(100)))
-	if(gain.max(scstart) == gain && inChallenge("u",22)) gain = gain.div(scstart).root(sc1pow).mul(scstart)
+	if(gain.max(sc1start) == gain && inChallenge("u",22)) gain = gain.div(sc1start).root(sc1pow).mul(sc1start)
+	let sc2pow = new Decimal(5)
+	let sc2start = new Decimal("1e1100")
+	if(gain.min(sc2start) == sc2start && inChallenge("u",22)) gain = gain.div(sc2start).root(sc2pow).mul(sc2start)
 	return gain
 }
 
@@ -167,15 +175,14 @@ var displayThings = [
 	},
 	function(){
 		if(inChallenge("u",22))
-			return "你的熵获得超过1e1000时，超出1e1000的部分被平方根"
+			return "你的熵获得超过1e1100时，超出1e1100的部分被5次根"
 	},
-	"endgame：购买q层升级35"
+	"endgame：购买q层升级45"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	//return player.points.gte(new Decimal("1e10000"))
-	return hasUpgrade("q",35)
+	return player.points.gte(new Decimal("1e1200")) && inChallenge("u",22)
 }
 
 

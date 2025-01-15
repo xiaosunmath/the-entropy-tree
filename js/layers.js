@@ -156,6 +156,20 @@ addLayer("a", {
             tooltip: "可以获得顶夸克和底夸克", 
             textStyle: {'color': '#CC00CC'},
         },
+        44:{
+            name: "💩之削弱",
+            done() {return hasUpgrade("q",45)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "削弱夸克的软上限", 
+            textStyle: {'color': '#CC00CC'},
+        },
+        45:{
+            name: "💩没有无限膨胀😭😭😭",
+            done() {return getBuyableAmount("q",21).min(150) == 150 && getBuyableAmount("q",22).min(20) == 20}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "遇到两个夸克购买项的折算", 
+            textStyle: {'color': '#CC00CC'},
+        },
     },
     row: "side",
     
@@ -652,7 +666,10 @@ addLayer("q", {
     type: "normal",
     exponent: 0.1,
     softcap: new Decimal("1e100"),
-    softcapPower: new Decimal(0.1),
+    softcapPower(){
+        if(hasUpgrade("q",45)) return n(0.2)
+        else return n(0.1)
+    },
     branches(){return ["c","e"]},
     gainMult() {
         mult = new Decimal(1)
@@ -661,6 +678,7 @@ addLayer("q", {
         if(getClickableState("q",62) == 1) mult = mult.mul(100)
         if(getClickableState("q",72) == 1) mult = mult.mul(clickableEffect("q",72))
         if(getClickableState("q",82) == 1) mult = mult.mul(clickableEffect("q",82))
+        mult = mult.mul(buyableEffect("q",21))
         return mult
     },
     gainExp() {
@@ -671,11 +689,13 @@ addLayer("q", {
     up_quark_energy_gain(){
         let gain = player.q.upquark.pow(2)
         if(getClickableState("q",91) == 1) gain = gain.pow(2)
+        if(hasUpgrade("q",44)) gain = gain.pow(2.5)
         return gain
     },
     down_quark_energy_gain(){
         let gain = player.q.downquark.pow(2)
         if(getClickableState("q",91) == 1) gain = gain.pow(2)
+        if(hasUpgrade("q",44)) gain = gain.pow(2.5)
         return gain
     },
     update(diff){
@@ -696,7 +716,7 @@ addLayer("q", {
             content: [ ["infobox","introBox"],"main-display","prestige-button",
             ["display-text",
                 function() {
-                    if(player.q.points.max("1e100") == player.q.points)return '夸克获得超过1e100的部分被10次方根！！！'
+                    if(player.q.points.max("1e100") == player.q.points)return '夸克获得超过1e100后被严重软上限！！！'
                 },
                {"color": "#FFFFFF", "font-size": "40px"}],
             ["display-text",
@@ -719,7 +739,8 @@ addLayer("q", {
             content:[ ["infobox","introBox"],"main-display","prestige-button",
             ["row",[["upgrade",11],["upgrade",12],["upgrade",13],["upgrade",14],["upgrade",15]]],
             ["row",[["upgrade",21],["upgrade",22],["upgrade",23],["upgrade",24],["upgrade",25]]],
-            ["row",[["upgrade",31],["upgrade",32],["upgrade",33],["upgrade",34],["upgrade",35]]],]
+            ["row",[["upgrade",31],["upgrade",32],["upgrade",33],["upgrade",34],["upgrade",35]]],
+            ["row",[["upgrade",41],["upgrade",42],["upgrade",43],["upgrade",44],["upgrade",45]]],]
         },
         "夸克统计": {
             content: [
@@ -758,7 +779,7 @@ addLayer("q", {
             ["display-text",
                 function() {return '我就tm后悔写这玩意'},
                {"color": "#FF0000", "font-size": "15px"}],
-            "buyables",
+            ["row",[["buyable",11],["buyable",12]]],
             ["row",[["clickable",41]]],"blank","blank",
             ["row",[["clickable",51]]],"blank",
             ["row",[["clickable",61],["clickable",62]]],"blank",
@@ -779,17 +800,14 @@ addLayer("q", {
                     function() {
                         if(hasUpgrade("q",35)) return '你有' + format(player.q.bquark) + '底夸克'
                     },
-                   {"color": "#FFFFFF", "font-size": "20px"}],
+                   {"color": "#FFFFFF", "font-size": "30px"}],
                 ["display-text",
                     function() {
                         if(hasUpgrade("q",35)) return '你有' + format(player.q.tquark) + '顶夸克'
                     },
-                   {"color": "#FFFFFF", "font-size": "20px"}],
-                ["display-text",
-                    function() {
-                        if(hasUpgrade("q",35)) return '咕咕咕'
-                    },
-                   {"color": "#FFFFFF", "font-size": "70px"}],
+                   {"color": "#FFFFFF", "font-size": "30px"}],"blank",
+                ["row",[["clickable",33],["clickable",34]]],"blank","blank",
+                ["row",[["buyable",21],["buyable",22]]],
             ],
             unlocked(){
                 return hasUpgrade("q",35)
@@ -868,10 +886,16 @@ addLayer("q", {
         },
         25: {
             title:"奇夸克没有效果怎么行",
-            description(){return "基于奇夸克数量倍增熵<br>当前：x" + format(upgradeEffect("q",25))},
+            description(){
+                let disp = "基于奇夸克数量倍增熵<br>当前：x" + format(upgradeEffect("q",25))
+                if(this.effect().min(1e160) == 1e160) disp = disp + "(软上限)"
+                return disp
+            },
             cost: new Decimal(30000),currencyDisplayName:"奇夸克",currencyInternalName:"squark",currencyLayer:"q",
             effect(){
-                return player.q.squark.add(1).pow(1.5)
+                let effe = player.q.squark.add(1).pow(1.5)
+                if(effe.min(1e160) == 1e160) effe = effe.div(1e160).pow(0.2).mul(1e160)
+                return effe
             },
             unlocked(){
                 return hasUpgrade("p",33)
@@ -887,10 +911,16 @@ addLayer("q", {
         },
         32: {
             title:"写升级里确实方便（划掉）",
-            description(){return "基于粲夸克倍增熵<br>当前：x" + format(upgradeEffect("q",32))},
+            description(){
+                let disp = "基于粲夸克倍增熵<br>当前：x" + format(upgradeEffect("q",32))
+                if(this.effect().min(1e130) == 1e130) disp = disp + "(软上限)"
+                return disp
+            },
             cost: new Decimal("2e7"),currencyDisplayName:"粲夸克",currencyInternalName:"cquark",currencyLayer:"q",
             effect(){
-                return player.q.cquark.add(1).pow(1.3)
+                let effe = player.q.cquark.add(1).pow(1.3)
+                if(effe.min(1e130) == 1e130) effe = effe.div(1e130).pow(0.2).mul(1e130)
+                return effe
             },
             unlocked(){
                 return hasUpgrade("p",24)
@@ -914,10 +944,50 @@ addLayer("q", {
         },
         35: {
             title:"6种",
-            description(){return "解锁更多种类的夸克"},
+            description(){return "解锁更多种类的夸克,并且解锁一行升级"},
             cost: new Decimal("1e103"),
             unlocked(){
                 return hasUpgrade("q",34)
+            },
+        },
+        41: {
+            title:"底数增强",
+            description(){return "让夸克倍增的底数x10"},
+            cost: new Decimal("1e7"),currencyDisplayName:"顶夸克",currencyInternalName:"tquark",currencyLayer:"q",
+            unlocked(){
+                return hasUpgrade("q",35)
+            },
+        },
+        42: {
+            title:"基数降低",
+            description(){return "让夸克倍增的价格基数/2"},
+            cost: new Decimal("2e16"),currencyDisplayName:"底夸克",currencyInternalName:"bquark",currencyLayer:"q",
+            unlocked(){
+                return hasUpgrade("q",41)
+            },
+        },
+        43: {
+            title:"升级再加强",
+            description(){return "增强升级“熵加成”的效果"},
+            cost: new Decimal("1e14"),currencyDisplayName:"顶夸克",currencyInternalName:"tquark",currencyLayer:"q",
+            unlocked(){
+                return hasUpgrade("q",42)
+            },
+        },
+        44: {
+            title:"公式再改进",
+            description(){return "再次改进上夸克能量和下夸克能量的获得"},
+            cost: new Decimal("1e33"),currencyDisplayName:"底夸克",currencyInternalName:"bquark",currencyLayer:"q",
+            unlocked(){
+                return hasUpgrade("q",43)
+            },
+        },
+        45: {
+            title:"什么时候才能完成挑战？",
+            description(){return "削弱夸克的软上限"},
+            cost: new Decimal("1e132"),
+            unlocked(){
+                return hasUpgrade("q",44)
             },
         },
     },
@@ -970,6 +1040,58 @@ addLayer("q", {
                 return getClickableState("q",121) == 1
             },
             style: {'height':'100px'},
+        },
+        21: {
+            title: "夸克倍增",
+            cost(x) {
+                let bas = new Decimal(10)
+                if(hasUpgrade("q",42)) bas = bas.div(2)
+                let scal1 = 3
+                if(getBuyableAmount("q",21).min(150) == 150) x = x.sub(149).pow(scal1).add(149)
+                return new Decimal(1).mul(bas.pow(x))
+            },
+            display() { 
+                let disp = "基于底夸克倍增夸克<br>当前：x" + format(buyableEffect("q",21))
+                disp = disp + "<br>价格：" + format(this.cost())
+                if(getBuyableAmount("q",21).min(150) == 150) disp = disp + "(折算)"
+                disp = disp + "<br>数量：" + format(getBuyableAmount("q",21))
+                return disp
+            },
+            canAfford() { return player.q.bquark.gte(this.cost()) },
+            buy() {
+                player.q.bquark = player.q.bquark.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            effect(){
+                let bas = player.q.bquark.add(1).log(1.5).add(1)
+                if(hasUpgrade("q",41)) bas = bas.mul(10)
+                return bas.pow(getBuyableAmount("q",21))
+            },
+        },
+        22: {
+            title: "自倍增",
+            cost(x) {
+                let bas = new Decimal(5)
+                let scal1 = 2
+                if(getBuyableAmount("q",22).min(20) == 20) x = x.sub(19).pow(scal1).add(19)
+                return new Decimal(1).mul(bas.pow(x.pow(1.5)))
+            },
+            display() { 
+                let disp = "基于顶夸克倍增底夸克和顶夸克<br>当前：x" + format(buyableEffect("q",22))
+                disp = disp + "<br>价格：" + format(this.cost())
+                if(getBuyableAmount("q",22).min(20) == 20) disp = disp + "(折算)"
+                disp = disp + "<br>数量：" + format(getBuyableAmount("q",22))
+                return disp
+            },
+            canAfford() { return player.q.tquark.gte(this.cost()) },
+            buy() {
+                player.q.tquark = player.q.tquark.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            effect(){
+                let bas = player.q.tquark.add(1).log(10).add(1)
+                return bas.pow(getBuyableAmount("q",22))
+            },
         },
     },
     clickables:{
@@ -1043,6 +1165,32 @@ addLayer("q", {
             },
             unlocked(){
                 return hasUpgrade("q",31)
+            }
+        },
+        33: {
+            title: "底夸克",
+            display(){return "利用你的夸克寻找底夸克"},
+            onClick(){
+                player.q.bquark = player.q.bquark.add(player.q.points.div(1e100).pow(0.9).mul(buyableEffect("q",22)))
+            },
+            canClick(){
+                return player.q.points.min(1e100) == 1e100
+            },
+            unlocked(){
+                return hasUpgrade("q",35)
+            }
+        },
+        34: {
+            title: "顶夸克",
+            display(){return "利用你的夸克寻找顶夸克"},
+            onClick(){
+                player.q.tquark = player.q.tquark.add(player.q.points.div(1e100).pow(0.2).mul(buyableEffect("q",22)))
+            },
+            canClick(){
+                return player.q.points.min(1e100) == 1e100
+            },
+            unlocked(){
+                return hasUpgrade("q",35)
             }
         },
         41: {
@@ -1122,7 +1270,9 @@ addLayer("q", {
             title:"熵加成",
             display(){return "基于夸克进一步倍增熵<br>价格：2夸克研究点<br>效果：x" + format(this.effect())},
             effect(){
-                return player.q.points.add(1).root(3)
+                let effe = player.q.points.add(1).root(3)
+                if(hasUpgrade("q",43)) effe = effe.pow(3)
+                return effe
             },
             canClick(){
                 let canc = player.q.quarkpts >= 2 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",61) == 1
