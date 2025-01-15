@@ -546,7 +546,7 @@ addLayer("c", {
                 let disp = "增加天体获得<br>当前：x" + format(buyableEffect("c",11))
                 if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost()) + "<br>数量：" + format(getBuyableAmount("c",11))
-                if(hasUpgrade("c",14)) disp = disp + "x" + format(getBuyableAmount("c",12))
+                if(hasUpgrade("c",14)) disp = disp + "x" + format(getBuyableAmount("c",12).add(1))
                 return disp
             },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
@@ -562,7 +562,7 @@ addLayer("c", {
             },
             effect(){
                 let effe = getBuyableAmount("c",11)
-                if(hasUpgrade("c",14)) effe = effe.mul(getBuyableAmount("c",12))
+                if(hasUpgrade("c",14)) effe = effe.mul(getBuyableAmount("c",12).add(1))
                 effe = effe.add(1)
                 if(hasUpgrade("c",12)) effe = effe.pow(1.2)
                 if(effe > 1e30) effe = effe.div(1e30).log(2).pow(5).mul(1e30)
