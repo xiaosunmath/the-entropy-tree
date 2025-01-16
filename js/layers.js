@@ -167,8 +167,22 @@ addLayer("a", {
             name: "💩没有无限膨胀😭😭😭",
             done() {return getBuyableAmount("q",21).min(150) == 150 && getBuyableAmount("q",22).min(20) == 20}, 
             onComplete(){player.a.points=player.a.points.add(1)},
-            tooltip: "遇到两个夸克购买项的折算", 
+            tooltip: "遇到两个夸克购买项的折算<br>奖励：解锁一个粒子升级", 
             textStyle: {'color': '#CC00CC'},
+        },
+        51:{
+            name: "💩打破了警察",
+            done() {return player.e.points.gte(111)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "获得111个元素合成器<br>奖励：解锁新的粒子升级(需要进入挑战)", 
+            textStyle: {'color': '#CC00CC'},
+        },
+        52:{
+            name: "💩的发电",
+            done() {return hasUpgrade("p",54)}, 
+            onComplete(){player.a.points=player.a.points.add(1)},
+            tooltip: "解锁电能", 
+            textStyle: {'color': '#6666DD'},
         },
     },
     row: "side",
@@ -299,6 +313,7 @@ addLayer("p", {
         if(hasUpgrade("p",23)) exp = exp.add(0.2)
         if(hasUpgrade("u",13)) exp = exp.add(0.1)
         if(hasUpgrade("u",15)) exp = exp.add(0.2)
+        if(hasUpgrade("p",34)) exp = exp.add(0.12)
         if(inChallenge("u",21)) exp = exp.div(10)
         return exp
     },
@@ -386,7 +401,7 @@ addLayer("p", {
             description(){return "解锁一个新层级<br>"},
             cost: new Decimal(1e20),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
             unlocked(){
-                return inChallenge("u",22) || hasUpgrade("p",31)
+                return inChallenge("u",22) || hasUpgrade("p",32)
             }
         },
         33: {
@@ -394,7 +409,88 @@ addLayer("p", {
             description(){return "粒子获得乘以1e485(指数前)，并且解锁一些夸克升级<br>"},
             cost: new Decimal(20000),currencyDisplayName:"夸克",currencyInternalName:"points",currencyLayer:"q",
             unlocked(){
-                return (inChallenge("u",22) || hasUpgrade("p",31)) && hasUpgrade("uc",11)
+                return (inChallenge("u",22) || hasUpgrade("p",33)) && hasUpgrade("uc",11)
+            }
+        },
+        34: {
+            title:"我要天体😭😭😭",
+            description(){return "粒子指数+0.12<br>"},
+            cost: new Decimal("1e265"),currencyDisplayName:"夸克",currencyInternalName:"points",currencyLayer:"q",
+            unlocked(){
+                return (inChallenge("u",22) || hasUpgrade("p",34)) && hasAchievement("a",45)
+            }
+        },
+        41: {
+            title:"更多的效果",
+            description(){return "给中子一个效果<br>"},
+            cost: new Decimal("1e1800"),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            unlocked(){
+                return (inChallenge("u",22) || hasUpgrade("p",41)) && hasAchievement("a",51)
+            }
+        },
+        42: {
+            title:"温度倍增",
+            description(){return "将宇宙温度获得翻倍<br>"},
+            cost: new Decimal("1e1835"),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            unlocked(){
+                return (inChallenge("u",22) || hasUpgrade("p",42)) && hasAchievement("a",51)
+            }
+        },
+        43: {
+            title:"温度倍增2",
+            description(){return "将宇宙温度获得x2<br>"},
+            cost: new Decimal("1e2075"),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            unlocked(){
+                return (inChallenge("u",22) || hasUpgrade("p",43)) && hasAchievement("a",51)
+            }
+        },
+        44: {
+            title:"温度倍增+++",
+            description(){return "将宇宙温度获得x3<br>"},
+            cost: new Decimal("1e2320"),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            unlocked(){
+                return (inChallenge("u",22) || hasUpgrade("p",44)) && hasAchievement("a",51)
+            }
+        },
+        51: {
+            title:"温度倍增↩️",
+            description(){return "基于宇宙温度倍增宇宙温度<br>当前：x" + format(upgradeEffect("p",51))},
+            cost: new Decimal("1e2645"),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            effect(){
+                return player.u.temperature.add(1).log(2)
+            },
+            unlocked(){
+                return (inChallenge("u",22) || hasUpgrade("p",51)) && hasAchievement("a",51)
+            }
+        },
+        52: {
+            title:"温度倍增a",
+            description(){return "基于熵倍增宇宙温度<br>当前：x" + format(upgradeEffect("p",52))},
+            cost: new Decimal("1e3235"),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            effect(){
+                return player.points.add(1).log(10).div(500).add(1)
+            },
+            unlocked(){
+                return (inChallenge("u",22) || hasUpgrade("p",52)) && hasAchievement("a",51)
+            }
+        },
+        53: {
+            title:"温度倍增b",
+            description(){return "基于天体质量倍增宇宙温度<br>当前：x" + format(upgradeEffect("p",53))},
+            cost: new Decimal("1e3935"),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            effect(){
+                return player.c.mass.add(1).log(10).div(2).add(1)
+            },
+            unlocked(){
+                return (inChallenge("u",22) || hasUpgrade("p",53)) && hasAchievement("a",51)
+            }
+        },
+        54: {
+            title:"效果无限",
+            description(){return "给电子一个效果，并且解锁电池，在挑战外也可以获得质子，中子，电子"},
+            cost: new Decimal("1e4880"),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+            unlocked(){
+                return (inChallenge("u",22) || hasUpgrade("p",54)) && hasAchievement("a",51)
             }
         },
     },
@@ -659,12 +755,18 @@ addLayer("q", {
         totalquarkpts: new Decimal(0), //总夸克研究点数
     }},
     color: "#CC00CC",
-    requires: new Decimal(1e20),
+    requires(){
+        if(inChallenge("u",22)) return n(1e20)
+        if(hasUpgrade("uc",14) && !inChallenge("u",22)) return n("1e10400")
+    },
     resource: "夸克",
     baseResource: "熵",
     baseAmount() {return player.points},
     type: "normal",
-    exponent: 0.1,
+    exponent(){
+        if(inChallenge("u",22)) return 0.1
+        if(hasUpgrade("uc",14) && !inChallenge("u",22)) return 0.04
+    },
     softcap: new Decimal("1e100"),
     softcapPower(){
         if(hasUpgrade("q",45)) return n(0.2)
@@ -679,6 +781,7 @@ addLayer("q", {
         if(getClickableState("q",72) == 1) mult = mult.mul(clickableEffect("q",72))
         if(getClickableState("q",82) == 1) mult = mult.mul(clickableEffect("q",82))
         mult = mult.mul(buyableEffect("q",21))
+        if(hasUpgrade("p",41)) mult = mult.mul(player.e.neutroneff)
         return mult
     },
     gainExp() {
@@ -1515,12 +1618,21 @@ addLayer("q", {
         if(hasUpgrade("q",23)) return 10
         else return 0
     },
+    doReset(resettingLayer){
+        if(layers[resettingLayer].row > layers[this.layer].row){
+            let kept = ["unlocked","auto"]
+            if((resettingLayer == "u" || resettingLayer == "e") && hasUpgrade("uc",14)){
+                kept.push("upgrades")
+            }
+            layerDataReset(this.layer,kept)
+        }
+    },
     row: 0,
     hotkeys: [
         {key: "q", description: "Q: 进行夸克重置", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){
-        if(hasUpgrade("p",32) && (inChallenge("u",22) || hasChallenge("u",22))) return true
+        if(hasUpgrade("p",32) && (inChallenge("u",22) || hasUpgrade("uc",14))) return true
         else return false
     }
 })
@@ -1570,6 +1682,12 @@ addLayer("u", {
         player.u.uni = player.u.uni.add(tmp.u.unigain.mul(diff))
         player.u.temeffect = player.u.temperature.sub(3).add(1).log(5).add(1)
         player.u.layerceff = player.c.points.div(10).add(1).log(10).div(10000).add(3)
+        if(hasUpgrade("p",42)) player.u.layerceff = player.u.layerceff.mul(2)
+        if(hasUpgrade("p",43)) player.u.layerceff = player.u.layerceff.mul(2)
+        if(hasUpgrade("p",44)) player.u.layerceff = player.u.layerceff.mul(3)
+        if(hasUpgrade("p",51)) player.u.layerceff = player.u.layerceff.mul(upgradeEffect("p",51))
+        if(hasUpgrade("p",52)) player.u.layerceff = player.u.layerceff.mul(upgradeEffect("p",52))
+        if(hasUpgrade("p",53)) player.u.layerceff = player.u.layerceff.mul(upgradeEffect("p",53))
     },
     gainMult() {
         mult = new Decimal(1)
@@ -2088,23 +2206,28 @@ addLayer("e", {
     update(diff){
         player.e.ele=player.e.ele.add(tmp.e.elegain.mul(diff))
         if(hasUpgrade("e",32)) layers.e.clickables[21].onHold()
-        if(inChallenge("u",22)){
+        if(inChallenge("u",22) || hasUpgrade("p",54)){
             player.e.proton = player.e.proton.add(player.e.ele.mul(118))
             player.e.neutron = player.e.neutron.add(player.e.ele.mul(179))
             player.e.electron = player.e.electron.add(player.e.ele.mul(118))
             //你不要管为什么这个乘数这么诡异，按118号元素算的
-            player.e.ele = player.e.ele.sub(player.e.ele)
-            player.e.lele = player.e.lele.sub(player.e.lele)
-            player.e.llele = player.e.llele.sub(player.e.llele)
-            player.e.lllele = player.e.lllele.sub(player.e.lllele)
+            if(!hasUpgrade("p",54)){
+                player.e.ele = player.e.ele.sub(player.e.ele)
+                player.e.lele = player.e.lele.sub(player.e.lele)
+                player.e.llele = player.e.llele.sub(player.e.llele)
+                player.e.lllele = player.e.lllele.sub(player.e.lllele)
+            }
+            
         }
-        if(!inChallenge("u",22)){
+        if(!inChallenge("u",22) && !hasUpgrade("p",54)){
             player.e.proton = player.e.proton.sub(player.e.proton)
             player.e.neutron = player.e.neutron.sub(player.e.neutron)
             player.e.electron = player.e.electron.sub(player.e.electron)
         }
         player.e.protoneff = player.e.proton.div(1e50).add(1).pow(2)
         if(player.e.protoneff.sub(1e10) > 0 && !hasUpgrade("uc",13)) player.e.protoneff = player.e.protoneff.div(1e10).log(1.1).mul(1e10)
+        player.e.neutroneff = player.e.neutron.add(1)
+        player.e.electroneff = player.e.electron.add(1).log(10)
     },
     tabFormat: {
         "主界面": {
@@ -2118,11 +2241,6 @@ addLayer("e", {
                     return '你的元素合成器被警察逮捕了，受到超级严重的软上限'
             },
                 {"color": "#FFFFFF", "font-size": "110px" }],
-            ["display-text",function() {
-                if(player.e.points.sub(119) > 0)
-                    return '你的元素合成器被送进精神病院，受到超级严重的软上限'
-            },
-                {"color": "#FFFFFF", "font-size": "120px" }],
                "upgrades","milestones"],
         },
         "元素": {
@@ -2151,16 +2269,20 @@ addLayer("e", {
             },
                 {"color": "#FFFFFF", "font-size": "20px" }],
             ["display-text",function() {
-                return '你有' + format(player.e.neutron) + '中子'
+                let disp = '你有' + format(player.e.neutron) + '中子'
+                if(hasUpgrade("p",41)) disp = disp + ",增益夸克获得x" + format(player.e.neutroneff)
+                return disp
             },
                 {"color": "#FFFFFF", "font-size": "20px" }],
             ["display-text",function() {
-                return '你有' + format(player.e.electron) + '电子'
+                let disp = '你有' + format(player.e.electron) + '电子'
+                if(hasUpgrade("p",54)) disp = disp + ",使你的电池容量为" + format(player.e.electroneff)
+                return disp
             },
                 {"color": "#FFFFFF", "font-size": "20px" }],
             ],
             unlocked(){
-                return inChallenge("u",22)
+                return inChallenge("u",22) || hasUpgrade("p",54)
             }
         }
     },
@@ -2442,6 +2564,11 @@ addLayer("uc", {
             description(){return "元素合成器效果底数+1,并且干掉质子效果的软上限"},
             cost: new Decimal(1e200),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
         },
+        14: {
+            title:"升级4",
+            description(){return "在重置时保留夸克升级,并且在挑战外夸克层级依旧生效,但是获得降低(建议120个元素合成器再进挑战)"},
+            cost: new Decimal("1e1790"),currencyDisplayName:"熵",currencyInternalName:"pts",currencyLayer:"p",
+        },
     },
     row: 999,
     
@@ -2449,4 +2576,78 @@ addLayer("uc", {
         {key: "", description: "", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return hasUpgrade("u",42)}
+})
+addLayer("b", {
+    infoboxes:{
+        introBox:{
+            title:"电能",
+            body(){
+                return "本层级不重置任何东西"
+            }
+        },
+    },
+    name: "电源",
+    symbol: "b",
+    position: 2,
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+        electricity: n(0),
+        electricity_cap: n(0),
+    }},
+    color: "#6666DD",
+    requires: new Decimal("1e23700"),
+    resource: "电源",
+    baseResource: "熵",
+    baseAmount() {return player.points},
+    type: "static",
+    exponent: 0,
+    branches(){return ["e"]},
+    resetsNothing(){
+        return true
+    },
+    gainMult() {
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() {
+        exp = new Decimal(0.002)
+        return exp
+    },
+    electricity_gain(){
+        let gain = player.b.points.pow(2)
+        return gain
+    },
+    update(diff){
+        if(hasUpgrade("p",54)) player.b.electricity_cap = player.e.electroneff
+        player.b.electricity = player.b.electricity.add(tmp.b.electricity_gain.mul(diff))
+        player.b.electricity = player.b.electricity.min(player.b.electricity_cap)
+    },
+    tabFormat: {
+        "主界面": {
+            content: [ ["infobox","introBox"],"main-display","prestige-button","blank",
+            ["display-text",function() {return '你每秒产生' + format(tmp.b.electricity_gain) + '电能'},
+                {"color": "#FFFFFF", "font-size": "20px" }],
+            ["display-text",function() {return '你有' + format(player.b.electricity) + '电能'},
+                {"color": "#FFFFFF", "font-size": "20px" }],
+            ["display-text",function() {return '你的电能上限为' + format(player.b.electricity_cap)},
+                {"color": "#FFFFFF", "font-size": "20px" }],
+            "upgrades"]},
+    },
+    upgrades: {
+        11: {
+            title:"升级1",
+            description(){return "使熵倍增超重元素获得<br>当前：x" + format(upgradeEffect("uc",11))},
+            cost: new Decimal("1.79e308"),
+            effect(){
+                return player.points.add(1).log(10).add(1).pow(3)
+            },
+        },
+    },
+    row: 1,
+    
+    hotkeys: [
+        {key: "b", description: "b", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return hasUpgrade("p",54)}
 })

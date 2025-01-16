@@ -13,12 +13,15 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.5.1",
-	name: "我可是伟大的平衡之神，任何暴涨都能轻易压制",
+	num: "0.4-",
+	name: "……",
 }
 
 let changelog = `
 	<h1>Changelog:</h1><br>
+	<h3>v0.4-</h3><br>
+		-添加8个升级<br>
+		-添加1个新层级<br>
 	<h3>v0.3.5.1</h3><br>
 		-添加5个升级<br>
 		-添加2个可购买<br>
@@ -95,7 +98,8 @@ let changelog = `
 	    -Added three upgrades.<br>
 	<h3>v0.0</h3><br>
 		- Added a layer.<br>
-		- Added three upgrades.<br>`
+		- Added three upgrades.<br>
+`
 
 let winText = `恭喜！你>暂时<通关了这个史`
 
@@ -160,6 +164,9 @@ function getPointGen() {
 	let sc2pow = new Decimal(5)
 	let sc2start = new Decimal("1e1100")
 	if(gain.min(sc2start) == sc2start && inChallenge("u",22)) gain = gain.div(sc2start).root(sc2pow).mul(sc2start)
+	let scpow = new Decimal(3)
+	let scstart = new Decimal("1e18000")
+	if(gain.min(scstart) == scstart) gain = gain.div(scstart).root(scpow).mul(scstart)
 	return gain
 }
 
@@ -177,12 +184,17 @@ var displayThings = [
 		if(inChallenge("u",22))
 			return "你的熵获得超过1e1100时，超出1e1100的部分被5次根"
 	},
-	"endgame：购买q层升级45"
+	function(){
+		if(player.points.gte("1e18000"))
+			return "熵的数量超过了1e18000，超出部分被3次根"
+	},
+	"endgame：进行一次电能重置"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e1200")) && inChallenge("u",22)
+	//return player.points.gte(new Decimal("1e1200")) && inChallenge("u",22)
+	return player.b.points.gte(1)
 }
 
 
