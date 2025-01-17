@@ -13,12 +13,15 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4-",
+	num: "0.4",
 	name: "……",
 }
 
 let changelog = `
 	<h1>Changelog:</h1><br>
+	<h3>v0.4</h3><br>
+		-添加2个升级<br>
+		-添加一个可购买<br>
 	<h3>v0.4-</h3><br>
 		-添加8个升级<br>
 		-添加1个新层级<br>
@@ -188,13 +191,13 @@ var displayThings = [
 		if(player.points.gte("1e18000"))
 			return "熵的数量超过了1e18000，超出部分被3次根"
 	},
-	"endgame：进行一次电能重置"
+	"endgame：购买b层升级13"
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
 	//return player.points.gte(new Decimal("1e1200")) && inChallenge("u",22)
-	return player.b.points.gte(1)
+	return hasUpgrade("b",13)
 }
 
 

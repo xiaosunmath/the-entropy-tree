@@ -14,7 +14,7 @@ addLayer("a", {
         },
     },
     name: "成就",
-    symbol: "成<br>就<br>🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣",
+    symbol: "成<br>就<br>🤣🤣🤣🤣🤣🤣🤣🤣🤣",
     position: 0,
     startData() { return {
         unlocked: true,
@@ -165,7 +165,7 @@ addLayer("a", {
         },
         45:{
             name: "💩没有无限膨胀😭😭😭",
-            done() {return getBuyableAmount("q",21).min(150) == 150 && getBuyableAmount("q",22).min(20) == 20}, 
+            done() {return getBuyableAmount("q",21).gte(150) && getBuyableAmount("q",22).gte(20)}, 
             onComplete(){player.a.points=player.a.points.add(1)},
             tooltip: "遇到两个夸克购买项的折算<br>奖励：解锁一个粒子升级", 
             textStyle: {'color': '#CC00CC'},
@@ -253,13 +253,13 @@ addLayer("sb", {
         },
     },
     name: "剧情",
-    symbol: "剧情😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡",
+    symbol: "剧情😡😡😡😡😡😡😡😡😡",
     position: 1,
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
     }},
-    color: "#FFFF00",
+    color: "#FFFFFF",
     resource: "剧情",
     tabFormat: {
         "剧情😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡": {
@@ -270,6 +270,32 @@ addLayer("sb", {
             ["infobox","eleBox"],
             ["infobox","chalBox"],
             ["infobox","quarkBox"],],},
+    },
+    row: "side",
+    
+    layerShown(){return true}
+})
+addLayer("shift", {
+    infoboxes:{
+        shitBox:{
+            title:"啊，你看到这里了",
+            body(){
+                return "1️⃣1️⃣4️⃣5️⃣1️⃣4️⃣"
+            }
+        },
+    },
+    name: "屎",
+    symbol: "屎💩💩💩💩💩💩",
+    position: 2,
+    startData() { return {
+        unlocked: true,
+		points: new Decimal(0),
+    }},
+    color: "#665522",
+    resource: "屎",
+    tabFormat: {
+        "md💩💩💩💩💩💩💩💩💩💩💩💩💩💩": {
+            content: [ ["infobox","shitBox"]],},
     },
     row: "side",
     
@@ -326,15 +352,15 @@ addLayer("p", {
             title:"描述描述描述",
             description(){
                 let disp = "基于粒子增加熵获得<br>当前：x" + format(upgradeEffect("p",11))
-                if(upgradeEffect("p",11) > 1e8) disp += "<br>(软上限)"
-                if(upgradeEffect("p",11) > 1e35) disp += "<br>(软上限)"
+                if(upgradeEffect("p",11).gte(1e8)) disp += "<br>(软上限)"
+                if(upgradeEffect("p",11).gte(1e35)) disp += "<br>(软上限)"
                 return disp
             },
             cost: new Decimal(1),
             effect(){
                 let effe = player.p.points.add(1).root(2)
-                if(effe > 1e8) effe = effe.div(1e8).root(5).mul(1e8)
-                if(effe > 1e35) effe = effe.div(1e35).log(2).mul(1e35)
+                if(effe.gte(1e8)) effe = effe.div(1e8).root(5).mul(1e8)
+                if(effe.gte(1e35)) effe = effe.div(1e35).log(2).mul(1e35)
                 return effe
             },
         },
@@ -570,7 +596,7 @@ addLayer("c", {
         if(hasMilestone("c",2)) layers.c.buyables[12].buyMax()
         player.c.mass=player.c.mass.add(tmp.c.massgain.mul(diff))
         player.c.masseff = player.c.mass.root(2).div(10).add(1)
-        if(player.c.masseff.sub(2.5) > 0) player.c.masseff = player.c.masseff.sub(1.5).log(10).add(2.5)
+        if(player.c.masseff.gte(2.5)) player.c.masseff = player.c.masseff.sub(1.5).log(10).add(2.5)
     },
     tabFormat: {
         "主界面": {
@@ -588,16 +614,16 @@ addLayer("c", {
             title:"宇宙宇宙宇宙",
             description(){
                 let disp = "反物质开始复制器，引力开启了挂壁模式，所以有天体。基于天体增加熵乘数<br>当前：x" + format(upgradeEffect("c",11))
-                if(upgradeEffect("c",11) > 1e15) disp += "<br>(软上限)"
-                if(upgradeEffect("c",11) > 1e130) disp += "<br>(软上限)"
+                if(upgradeEffect("c",11).gte(1e15)) disp += "<br>(软上限)"
+                if(upgradeEffect("c",11).gte(1e130)) disp += "<br>(软上限)"
                 return disp
             },
             cost: new Decimal(0),
             effect(){
                 let effe = player.c.points.add(1).pow(1.2)
                 if(hasUpgrade("c",13)) effe = effe.pow(2)
-                if(effe > 1e15) effe = effe.div(1e15).root(5).mul(1e15)
-                if(effe > 1e130) effe = effe.div(1e130).log(2).mul(1e130)
+                if(effe.gte(1e15)) effe = effe.div(1e15).root(5).mul(1e15)
+                if(effe.gte(1e130)) effe = effe.div(1e130).log(2).mul(1e130)
                 return effe
             },
         },
@@ -640,7 +666,7 @@ addLayer("c", {
             cost(x) { return new Decimal(10).mul(x.add(1).pow(3)) },
             display() { 
                 let disp = "增加天体获得<br>当前：x" + format(buyableEffect("c",11))
-                if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
+                if(buyableEffect("c",11).gte(1e30)) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost()) + "<br>数量：" + format(getBuyableAmount("c",11))
                 if(hasUpgrade("c",14)) disp = disp + "x" + format(getBuyableAmount("c",12).add(1))
                 return disp
@@ -661,7 +687,7 @@ addLayer("c", {
                 if(hasUpgrade("c",14)) effe = effe.mul(getBuyableAmount("c",12).add(1))
                 effe = effe.add(1)
                 if(hasUpgrade("c",12)) effe = effe.pow(1.2)
-                if(effe > 1e30) effe = effe.div(1e30).log(2).pow(5).mul(1e30)
+                if(effe.gte(1e30)) effe = effe.div(1e30).log(2).pow(5).mul(1e30)
                 effe = effe.pow(player.c.masseff)
                 return effe
             },
@@ -671,7 +697,7 @@ addLayer("c", {
             cost(x) { return new Decimal(1e15).mul(x.add(1).pow(4)) },
             display() { 
                 let disp = "增加熵获得<br>当前：x" + format(buyableEffect("c",12))
-                if(buyableEffect("c",12) > 1e50) disp = disp + "（受nb的软上限限制）"
+                if(buyableEffect("c",12).gte(1e50)) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost()) + "<br>数量：" + format(getBuyableAmount("c",12))
                 return disp
             },
@@ -688,7 +714,7 @@ addLayer("c", {
             },
             effect(){
                 effe = getBuyableAmount("c",12).add(1).pow(5)
-                if(effe > 1e50) effe = effe.div(1e50).log(2).pow(5).mul(1e50)
+                if(effe.gte(1e50)) effe = effe.div(1e50).log(2).pow(5).mul(1e50)
                 effe = effe.pow(player.c.masseff)
                 return effe
             },
@@ -723,8 +749,7 @@ addLayer("c", {
         {key: "c", description: "C: 进行天体重置", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){
-        if(hasUpgrade("p",23)) return true
-        if(player.u.points > 0) return true
+        if(hasUpgrade("p",23) || hasAchievement("a",13)) return true
         else return false
     }
 })
@@ -819,7 +844,7 @@ addLayer("q", {
             content: [ ["infobox","introBox"],"main-display","prestige-button",
             ["display-text",
                 function() {
-                    if(player.q.points.max("1e100") == player.q.points)return '夸克获得超过1e100后被严重软上限！！！'
+                    if(player.q.points.gte(1e100))return '夸克获得超过1e100后被严重软上限！！！'
                 },
                {"color": "#FFFFFF", "font-size": "40px"}],
             ["display-text",
@@ -991,13 +1016,13 @@ addLayer("q", {
             title:"奇夸克没有效果怎么行",
             description(){
                 let disp = "基于奇夸克数量倍增熵<br>当前：x" + format(upgradeEffect("q",25))
-                if(this.effect().min(1e160) == 1e160) disp = disp + "(软上限)"
+                if(this.effect().gte(1e160)) disp = disp + "(软上限)"
                 return disp
             },
             cost: new Decimal(30000),currencyDisplayName:"奇夸克",currencyInternalName:"squark",currencyLayer:"q",
             effect(){
                 let effe = player.q.squark.add(1).pow(1.5)
-                if(effe.min(1e160) == 1e160) effe = effe.div(1e160).pow(0.2).mul(1e160)
+                if(effe.gte(1e160)) effe = effe.div(1e160).pow(0.2).mul(1e160)
                 return effe
             },
             unlocked(){
@@ -1016,13 +1041,13 @@ addLayer("q", {
             title:"写升级里确实方便（划掉）",
             description(){
                 let disp = "基于粲夸克倍增熵<br>当前：x" + format(upgradeEffect("q",32))
-                if(this.effect().min(1e130) == 1e130) disp = disp + "(软上限)"
+                if(this.effect().gte(1e130)) disp = disp + "(软上限)"
                 return disp
             },
             cost: new Decimal("2e7"),currencyDisplayName:"粲夸克",currencyInternalName:"cquark",currencyLayer:"q",
             effect(){
                 let effe = player.q.cquark.add(1).pow(1.3)
-                if(effe.min(1e130) == 1e130) effe = effe.div(1e130).pow(0.2).mul(1e130)
+                if(effe.gte(1e130)) effe = effe.div(1e130).pow(0.2).mul(1e130)
                 return effe
             },
             unlocked(){
@@ -1030,7 +1055,7 @@ addLayer("q", {
             },
         },
         33: {
-            title:"是策略，加速没救了",
+            title:"……",
             description(){return "解锁夸克研究树"},
             cost: new Decimal("1e16"),
             unlocked(){
@@ -1042,7 +1067,7 @@ addLayer("q", {
             description(){return "先给QoL，每tick获得100%将要获得的奇夸克和粲夸克"},
             cost: new Decimal("1e103"),
             unlocked(){
-                return player.q.points.max("1e100") == player.q.points
+                return player.q.points.gte(1e100)
             },
         },
         35: {
@@ -1150,13 +1175,13 @@ addLayer("q", {
                 let bas = new Decimal(10)
                 if(hasUpgrade("q",42)) bas = bas.div(2)
                 let scal1 = 3
-                if(getBuyableAmount("q",21).min(150) == 150) x = x.sub(149).pow(scal1).add(149)
+                if(getBuyableAmount("q",21).gte(150)) x = x.sub(149).pow(scal1).add(149)
                 return new Decimal(1).mul(bas.pow(x))
             },
             display() { 
                 let disp = "基于底夸克倍增夸克<br>当前：x" + format(buyableEffect("q",21))
                 disp = disp + "<br>价格：" + format(this.cost())
-                if(getBuyableAmount("q",21).min(150) == 150) disp = disp + "(折算)"
+                if(getBuyableAmount("q",21).gte(150)) disp = disp + "(折算)"
                 disp = disp + "<br>数量：" + format(getBuyableAmount("q",21))
                 return disp
             },
@@ -1176,13 +1201,13 @@ addLayer("q", {
             cost(x) {
                 let bas = new Decimal(5)
                 let scal1 = 2
-                if(getBuyableAmount("q",22).min(20) == 20) x = x.sub(19).pow(scal1).add(19)
+                if(getBuyableAmount("q",22).gte(20)) x = x.sub(19).pow(scal1).add(19)
                 return new Decimal(1).mul(bas.pow(x.pow(1.5)))
             },
             display() { 
                 let disp = "基于顶夸克倍增底夸克和顶夸克<br>当前：x" + format(buyableEffect("q",22))
                 disp = disp + "<br>价格：" + format(this.cost())
-                if(getBuyableAmount("q",22).min(20) == 20) disp = disp + "(折算)"
+                if(getBuyableAmount("q",22).gte(20)) disp = disp + "(折算)"
                 disp = disp + "<br>数量：" + format(getBuyableAmount("q",22))
                 return disp
             },
@@ -1206,7 +1231,7 @@ addLayer("q", {
                 player.q.upquark = player.q.upquark.add(1)
             },
             canClick(){
-                return player.q.points >= 1
+                return player.q.points.gte(1)
             },
         },
         12: {
@@ -1217,7 +1242,7 @@ addLayer("q", {
                 player.q.downquark = player.q.downquark.add(1)
             },
             canClick(){
-                return player.q.points >= 1
+                return player.q.points.gte(1)
             },
         },
         21: {
@@ -1228,7 +1253,7 @@ addLayer("q", {
                 player.q.points = player.q.points.sub(player.q.points.mul(0.1))
             },
             canClick(){
-                return player.q.points >= 1
+                return player.q.points.gte(1)
             },
         },
         22: {
@@ -1239,7 +1264,7 @@ addLayer("q", {
                 player.q.points = player.q.points.sub(player.q.points.mul(0.1))
             },
             canClick(){
-                return player.q.points >= 1
+                return player.q.points.gte(1)
             },
         },
         31: {
@@ -1250,7 +1275,7 @@ addLayer("q", {
                 player.q.points = player.q.points.mul(0.5)
             },
             canClick(){
-                return player.q.points >= 20000
+                return player.q.points.gte(20000)
             },
             unlocked(){
                 return hasUpgrade("q",24)
@@ -1264,7 +1289,7 @@ addLayer("q", {
                 player.q.points = player.q.points.mul(0.5)
             },
             canClick(){
-                return player.q.points >= 2e8
+                return player.q.points.gte(2e8)
             },
             unlocked(){
                 return hasUpgrade("q",31)
@@ -1277,7 +1302,7 @@ addLayer("q", {
                 player.q.bquark = player.q.bquark.add(player.q.points.div(1e100).pow(0.9).mul(buyableEffect("q",22)))
             },
             canClick(){
-                return player.q.points.min(1e100) == 1e100
+                return player.q.points.gte(1e100)
             },
             unlocked(){
                 return hasUpgrade("q",35)
@@ -1290,7 +1315,7 @@ addLayer("q", {
                 player.q.tquark = player.q.tquark.add(player.q.points.div(1e100).pow(0.2).mul(buyableEffect("q",22)))
             },
             canClick(){
-                return player.q.points.min(1e100) == 1e100
+                return player.q.points.gte(1e100)
             },
             unlocked(){
                 return hasUpgrade("q",35)
@@ -1313,7 +1338,7 @@ addLayer("q", {
             title:"开始的时候简单一点",
             display(){return "将熵获得x1e10<br>价格：1夸克研究点"},
             canClick(){
-                return player.q.quarkpts >= 1 && getClickableState(this.layer,this.id) != 1
+                return player.q.quarkpts.gte(1) && getClickableState(this.layer,this.id) != 1
             },
             onClick(){
                 player.q.quarkpts = player.q.quarkpts.sub(1)
@@ -1331,7 +1356,7 @@ addLayer("q", {
             title:"粒子加成",
             display(){return "将粒子获得x1e5<br>价格：1夸克研究点"},
             canClick(){
-                let canc = player.q.quarkpts >= 1 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",51) == 1
+                let canc = player.q.quarkpts.gte(1) && getClickableState(this.layer,this.id) != 1 && getClickableState("q",51) == 1
                 if(getClickableState("q",111) != 1) canc = canc && getClickableState("q",62) == 0
                 return canc
             },
@@ -1352,7 +1377,7 @@ addLayer("q", {
             title:"夸克加成",
             display(){return "将夸克获得x1e2<br>价格：1夸克研究点"},
             canClick(){
-                let canc = player.q.quarkpts >= 1 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",51) == 1
+                let canc = player.q.quarkpts.gte(1) && getClickableState(this.layer,this.id) != 1 && getClickableState("q",51) == 1
                 if(getClickableState("q",111) != 1) canc = canc && getClickableState("q",61) == 0
                 return canc
             },
@@ -1378,7 +1403,7 @@ addLayer("q", {
                 return effe
             },
             canClick(){
-                let canc = player.q.quarkpts >= 2 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",61) == 1
+                let canc = player.q.quarkpts.gte(2) && getClickableState(this.layer,this.id) != 1 && getClickableState("q",61) == 1
                 return canc
             },
             onClick(){
@@ -1401,7 +1426,7 @@ addLayer("q", {
                 return player.p.points.add(1).log(10).mul(5).add(1)
             },
             canClick(){
-                let canc = player.q.quarkpts >= 2 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",62) == 1
+                let canc = player.q.quarkpts.gte(2) && getClickableState(this.layer,this.id) != 1 && getClickableState("q",62) == 1
                 return canc
             },
             onClick(){
@@ -1424,7 +1449,7 @@ addLayer("q", {
                 return player.q.up_quark_energy.add(1).root(4)
             },
             canClick(){
-                let canc = player.q.quarkpts >= 2 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",71) == 1
+                let canc = player.q.quarkpts.gte(2) && getClickableState(this.layer,this.id) != 1 && getClickableState("q",71) == 1
                 return canc
             },
             onClick(){
@@ -1447,7 +1472,7 @@ addLayer("q", {
                 return player.q.down_quark_energy.add(1).log(2).mul(3).add(1)
             },
             canClick(){
-                let canc = player.q.quarkpts >= 2 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",72) == 1
+                let canc = player.q.quarkpts.gte(2) && getClickableState(this.layer,this.id) != 1 && getClickableState("q",72) == 1
                 return canc
             },
             onClick(){
@@ -1467,7 +1492,7 @@ addLayer("q", {
             title:"公式改进",
             display(){return "让上夸克能量和下夸克能量的获得公式更好<br>价格：2夸克研究点"},
             canClick(){
-                let canc = player.q.quarkpts >= 2 && getClickableState(this.layer,this.id) != 1 && (getClickableState("q",81) == 1 || getClickableState("q",82) == 1)
+                let canc = player.q.quarkpts.gte(2) && getClickableState(this.layer,this.id) != 1 && (getClickableState("q",81) == 1 || getClickableState("q",82) == 1)
                 return canc
             },
             onClick(){
@@ -1490,7 +1515,7 @@ addLayer("q", {
                 return player.q.points.add(1).log(10).div(2).add(1).min(50)
             },
             canClick(){
-                let canc = player.q.quarkpts >= 8 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",91) == 1
+                let canc = player.q.quarkpts.gte(8) && getClickableState(this.layer,this.id) != 1 && getClickableState("q",91) == 1
                 if(getClickableState("q",111) != 1) canc = canc && !getClickableState("q",102) == 1 && !getClickableState("q",103) == 1
                 return canc
             },
@@ -1518,7 +1543,7 @@ addLayer("q", {
                 return bas.pow(player.q.totalquarkpts)
             },
             canClick(){
-                let canc = player.q.quarkpts >= 8 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",91) == 1
+                let canc = player.q.quarkpts.gte(8) && getClickableState(this.layer,this.id) != 1 && getClickableState("q",91) == 1
                 if(getClickableState("q",111) != 1) canc = canc && !getClickableState("q",101) == 1 && !getClickableState("q",103) == 1
                 return canc
             },
@@ -1546,7 +1571,7 @@ addLayer("q", {
                 return bas.pow(player.q.totalquarkpts)
             },
             canClick(){
-                let canc = player.q.quarkpts >= 8 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",91) == 1
+                let canc = player.q.quarkpts.gte(8) && getClickableState(this.layer,this.id) != 1 && getClickableState("q",91) == 1
                 if(getClickableState("q",111) != 1) canc = canc && !getClickableState("q",101) == 1 && !getClickableState("q",102) == 1
                 return canc
             },
@@ -1570,7 +1595,7 @@ addLayer("q", {
             title:"购买所有",
             display(){return "可以同时购买这个树的所有升级(绝对不是作者不想做了<br>价格：14夸克研究点<br>"},
             canClick(){
-                let canc = player.q.quarkpts >= 14 && getClickableState(this.layer,this.id) != 1 && (getClickableState("q",101) == 1 || getClickableState("q",102) == 1 || getClickableState("q",103) == 1)
+                let canc = player.q.quarkpts.gte(14) && getClickableState(this.layer,this.id) != 1 && (getClickableState("q",101) == 1 || getClickableState("q",102) == 1 || getClickableState("q",103) == 1)
                 return canc
             },
             onClick(){
@@ -1593,7 +1618,7 @@ addLayer("q", {
             title:"最便宜的一次",
             display(){return "可以使用熵购买夸克研究点<br>价格：1夸克研究点<br>"},
             canClick(){
-                let canc = player.q.quarkpts >= 1 && getClickableState(this.layer,this.id) != 1 && getClickableState("q",111) == 1
+                let canc = player.q.quarkpts.gte(1) && getClickableState(this.layer,this.id) != 1 && getClickableState("q",111) == 1
                 return canc
             },
             onClick(){
@@ -1736,7 +1761,7 @@ addLayer("u", {
             description(){return "你的宇宙被10^1145141919810个核弹炸死了，并且被10^9*10^15反物质炸的死的不能再死了，而且被K9e15攻击的恐怖鳗鱼打成了。所以宇宙要进行复仇，使你的熵，粒子，天体数量x10,并且使你的熵^1.02(下一个升级在3宇宙)<br>"},
             cost: new Decimal(0),
             unlocked(){
-                if(player.u.points > 0) return true
+                if(player.u.points.gte(1)) return true
                 else return false
             }
         },
@@ -1745,7 +1770,7 @@ addLayer("u", {
             description(){return "宇宙被作者制裁了，所以只能让你的熵^1.1(下一个升级在10宇宙)<br>"},
             cost: new Decimal(0),
             unlocked(){
-                if(player.u.points > 2) return true
+                if(player.u.points.gte(3)) return true
                 else return false
             }
         },
@@ -1754,7 +1779,7 @@ addLayer("u", {
             description(){return "你的宇宙觉得还是太慢了，于是粒子和天体的指数+0.1(下一个20)<br>"},
             cost: new Decimal(0),
             unlocked(){
-                if(player.u.points > 9) return true
+                if(player.u.points.gte(10)) return true
                 else return false
             }
         },
@@ -1763,7 +1788,7 @@ addLayer("u", {
             description(){return "解锁挑战(下一个30)<br>"},
             cost: new Decimal(0),
             unlocked(){
-                if(player.u.points > 19) return true
+                if(player.u.points.gte(20)) return true
                 else return false
             }
         },
@@ -1772,7 +1797,7 @@ addLayer("u", {
             description(){return "使粒子和天体的指数+0.2(50)<br>"},
             cost: new Decimal(0),
             unlocked(){
-                if(player.u.points > 29) return true
+                if(player.u.points.gte(30)) return true
                 else return false
             }
         },
@@ -1786,8 +1811,8 @@ addLayer("u", {
             effect(){
                 if(!hasUpgrade("e",22)){
                     let effe = player.u.points.log(10).div(10).add(1)
-                    if(effe.sub(2) > 0) effe = effe.sub(1).log(10).add(2)
-                    if(effe.sub(3) > 0) effe = effe.sub(2).root(2).add(2)
+                    if(effe.gte(2)) effe = effe.sub(1).log(10).add(2)
+                    if(effe.gte(3)) effe = effe.sub(2).root(2).add(2)
                     return effe
                 }
                 else{
@@ -1797,7 +1822,7 @@ addLayer("u", {
                 
             },
             unlocked(){
-                if(player.u.points > 49) return true
+                if(player.u.points.gte(50)) return true
                 else return false
             },
         },
@@ -1806,7 +1831,7 @@ addLayer("u", {
             description(){return "解锁第二个挑战"},
             cost: new Decimal(0),
             unlocked(){
-                if(player.u.points > 49) return true
+                if(player.u.points.gte(50)) return true
                 else return false
             },
         },
@@ -1931,28 +1956,16 @@ addLayer("u", {
             title:"描述描述描述描述描述描述描述描述",
             description(){return "为什么我不用里程碑呢，当然是因为占空间小啊<br>"},
             cost: new Decimal("(e^114514) 1"),
-            unlocked(){
-                if(player.u.points > 0) return true
-                else return false
-            }
         },
         92: {
             title:"只是一个为了庆祝的升级",
             description(){return "layer.js突破1000行<br>版本v0.3.2"},
             cost: new Decimal("(e^69420) 1"),
-            unlocked(){
-                if(player.u.points > 0) return true
-                else return false
-            }
         },
         201: {
             title:"只有挂壁才能买到这个升级",
             description(){return "我是最强黑客，我是最强黑客！"},
             cost: new Decimal("(e^1.79e308) 1"),
-            unlocked(){
-                if(player.u.points > 0) return true
-                else return false
-            }
         },
     },
     milestones: {
@@ -1969,16 +1982,14 @@ addLayer("u", {
                 let bas = new Decimal(10)
                 let scal1 = new Decimal(2)
                 if(hasUpgrade("u",23)) bas = bas.sub(1)
-                if(getBuyableAmount("u",11).sub(300) > 0) x = x.sub(300).pow(scal1).add(300)
+                if(getBuyableAmount("u",11).gte(300)) x = x.sub(300).pow(scal1).add(300)
                 return new Decimal(10).mul(bas.pow(x.pow(1.1)))
             },
             display() { 
                 let disp = "增加宇宙力量获得<br>当前：x" + format(buyableEffect("u",11))
-                //if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost())
-                if(getBuyableAmount("u",11).sub(300) > 0) disp = disp + "（折算）"
+                if(getBuyableAmount("u",11).gte(300) > 0) disp = disp + "（折算）"
                 disp = disp + "<br>数量：" + format(getBuyableAmount("u",11))
-                //if(hasUpgrade("u",14)) disp = disp + "x" + format(getBuyableAmount("c",12))
                 return disp
             },
             canAfford() { return player[this.layer].uni.gte(this.cost()) },
@@ -2003,14 +2014,14 @@ addLayer("u", {
             cost(x) { 
                 let bas = new Decimal(10)
                 let scal1 = new Decimal(2)
-                if(getBuyableAmount("u",12).sub(300) > 0) x = x.sub(300).pow(scal1).add(300)
+                if(getBuyableAmount("u",12).gte(300)) x = x.sub(300).pow(scal1).add(300)
                 return new Decimal(1e33).mul(bas.pow(x.pow(1.05)))
             },
             display() { 
                 let disp = "基于宇宙力量增加宇宙力量获得<br>当前：x" + format(buyableEffect("u",12))
                 //if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost())
-                if(getBuyableAmount("u",12).sub(300) > 0) disp = disp + "（折算）"
+                if(getBuyableAmount("u",12).gte(300)) disp = disp + "（折算）"
                 disp = disp + "<br>数量：" + format(getBuyableAmount("u",12))
                 //if(hasUpgrade("u",14)) disp = disp + "x" + format(getBuyableAmount("c",12))
                 return disp
@@ -2037,14 +2048,14 @@ addLayer("u", {
             cost(x) { 
                 let bas = new Decimal(100)
                 let scal1 = new Decimal(2)
-                if(getBuyableAmount("u",13).sub(300) > 0) x = x.sub(300).pow(scal1).add(300)
+                if(getBuyableAmount("u",13).gte(300)) x = x.sub(300).pow(scal1).add(300)
                 return new Decimal("1e600").mul(bas.pow(x.pow(1.1)))
             },
             display() { 
                 let disp = "基于宇宙增加宇宙力量获得<br>当前：x" + format(buyableEffect("u",13))
                 //if(buyableEffect("c",11) > 1e30) disp = disp + "（受nb的软上限限制）"
                 disp = disp + "<br>价格：" + format(this.cost())
-                if(getBuyableAmount("u",13).sub(300) > 0) disp = disp + "（折算）"
+                if(getBuyableAmount("u",13).gte(300)) disp = disp + "（折算）"
                 disp = disp + "<br>数量：" + format(getBuyableAmount("u",13))
                 //if(hasUpgrade("u",14)) disp = disp + "x" + format(getBuyableAmount("c",12))
                 return disp
@@ -2079,7 +2090,7 @@ addLayer("u", {
                 player.u.temperature = player.u.layerceff.max(player.u.temperature)
             },
             canClick(){
-                return player.c.points > 0
+                return player.c.points.gte(1)
             },
         },
     },
@@ -2184,16 +2195,17 @@ addLayer("e", {
     },
     gainExp() {
         exp = new Decimal(0.02)
-        if(player.e.points.sub(5) > 0) exp = exp.sub(0.005)
-        if(player.e.points.sub(32) > 0) exp = exp.sub(0.003)
-        if(player.e.points.sub(60) > 0) exp = exp.sub(0.002)
-        if(player.e.points.sub(109) > 0) exp = exp.sub(0.005)
+        if(player.e.points.gte(5)) exp = exp.sub(0.005)
+        if(player.e.points.gte(32)) exp = exp.sub(0.003)
+        if(player.e.points.gte(60)) exp = exp.sub(0.002)
+        if(player.e.points.gte(110)) exp = exp.sub(0.005)
         return exp
     },
     elegain(){
         let gain = player.e.points.pow(3).div(100)
         let bas = new Decimal(2)
         if(hasUpgrade("uc",13)) bas = bas.add(1)
+        if(hasUpgrade("b",12)) bas = bas.add(upgradeEffect("b",12))
         if(hasUpgrade("e",15)) gain = bas.pow(player.e.points.div(2))
         if(hasUpgrade("e",11)) gain = gain.mul(upgradeEffect("e",11))
         if(hasUpgrade("e",12)) gain = gain.mul(upgradeEffect("e",12))
@@ -2201,6 +2213,7 @@ addLayer("e", {
         if(hasUpgrade("e",25)) gain = gain.mul(upgradeEffect("e",25))
         if(hasUpgrade("u",41)) gain = gain.mul(upgradeEffect("u",41))
         if(hasUpgrade("uc",11)) gain = gain.mul(upgradeEffect("uc",11))
+        if(player.b.c11time != 0) gain = gain.mul(player.b.c11eff)
         return gain
     },
     update(diff){
@@ -2227,7 +2240,9 @@ addLayer("e", {
         player.e.protoneff = player.e.proton.div(1e50).add(1).pow(2)
         if(player.e.protoneff.sub(1e10) > 0 && !hasUpgrade("uc",13)) player.e.protoneff = player.e.protoneff.div(1e10).log(1.1).mul(1e10)
         player.e.neutroneff = player.e.neutron.add(1)
+        
         player.e.electroneff = player.e.electron.add(1).log(10)
+        if(hasUpgrade("b",11)) player.e.electroneff = player.e.electroneff.mul(upgradeEffect("b",11))
     },
     tabFormat: {
         "主界面": {
@@ -2237,7 +2252,7 @@ addLayer("e", {
             ["display-text",function() {return '你的元素合成器在5，32，60将受到软上限'},
                 {"color": "#FFFFFF", "font-size": "50px" }],
             ["display-text",function() {
-                if(player.e.points.sub(109) > 0)
+                if(player.e.points.gte(110))
                     return '你的元素合成器被警察逮捕了，受到超级严重的软上限'
             },
                 {"color": "#FFFFFF", "font-size": "110px" }],
@@ -2264,7 +2279,7 @@ addLayer("e", {
             ["display-text",function() {
                 let disp = '你有' + format(player.e.proton) + '质子'
                 if(hasUpgrade("p",31)) disp = disp + ",增益熵获取x" + format(player.e.protoneff)
-                if(player.e.protoneff.sub(1e10) > 0 && !hasUpgrade("uc",13)) disp = disp + "(防止挂机的软上限)"
+                if(player.e.protoneff.gte(1e10) && !hasUpgrade("uc",13)) disp = disp + "(防止挂机的软上限)"
                 return disp
             },
                 {"color": "#FFFFFF", "font-size": "20px" }],
@@ -2295,7 +2310,7 @@ addLayer("e", {
                 return player.u.points.add(1).log(10).div(10)
             },
             unlocked(){
-                if(player.e.points.sub(1) >= 0) return true
+                if(player.e.points.gte(1)) return true
                 else return false
             },
         },
@@ -2444,7 +2459,7 @@ addLayer("e", {
                 if(!hasUpgrade("e",32)) player.e.ele = player.e.ele.sub(player.e.ele.mul(0.1))
             },
             canClick(){
-                return player.e.ele > 0
+                return player.e.ele.gte(1)
             },
         },
         12: {
@@ -2455,7 +2470,7 @@ addLayer("e", {
                 if(!hasUpgrade("e",32)) player.e.lele = player.e.lele.sub(player.e.lele.mul(0.1))
             },
             canClick(){
-                return player.e.lele > 0
+                return player.e.lele.gte(1)
             },
         },
         13: {
@@ -2466,7 +2481,7 @@ addLayer("e", {
                 if(!hasUpgrade("e",32)) player.e.llele = player.e.llele.sub(player.e.llele.mul(0.1))
             },
             canClick(){
-                return player.e.llele > 0
+                return player.e.llele.gte(1)
             },
         },
         21: {
@@ -2489,7 +2504,7 @@ addLayer("e", {
                 if(!hasUpgrade("e",32)) player.e.llele = player.e.llele.sub(player.e.llele.mul(0.1))
             },
             canClick(){
-                return player.e.llele > 0
+                return player.e.llele.gte(1)
             },
         },
     },
@@ -2594,6 +2609,9 @@ addLayer("b", {
 		points: new Decimal(0),
         electricity: n(0),
         electricity_cap: n(0),
+        c11time: n(0),//点击项11的剩余时间
+        c11eff: n(1),//点击项11的效果
+        c11push: n(0),//点击项11内的电能
     }},
     color: "#6666DD",
     requires: new Decimal("1e23700"),
@@ -2612,16 +2630,26 @@ addLayer("b", {
     },
     gainExp() {
         exp = new Decimal(0.002)
+        exp = exp.div(player.b.points.mul(2).add(1))
         return exp
     },
     electricity_gain(){
         let gain = player.b.points.pow(2)
+        if(hasUpgrade("b",11)) gain = gain.mul(upgradeEffect("b",11))
         return gain
     },
     update(diff){
-        if(hasUpgrade("p",54)) player.b.electricity_cap = player.e.electroneff
+        if(hasUpgrade("p",54)){
+            player.b.electricity_cap = player.e.electroneff
+        }
         player.b.electricity = player.b.electricity.add(tmp.b.electricity_gain.mul(diff))
         player.b.electricity = player.b.electricity.min(player.b.electricity_cap)
+
+        player.b.c11time = player.b.c11time.sub(diff).max(0)
+        if(player.b.c11time == 0){
+            player.b.c11eff = one
+            player.b.c11push = zero
+        }
     },
     tabFormat: {
         "主界面": {
@@ -2632,18 +2660,78 @@ addLayer("b", {
                 {"color": "#FFFFFF", "font-size": "20px" }],
             ["display-text",function() {return '你的电能上限为' + format(player.b.electricity_cap)},
                 {"color": "#FFFFFF", "font-size": "20px" }],
-            "upgrades"]},
+            "blank",
+            ["row",[["clickable",11]]],
+            ]
+        },
+        "升级": {
+            content: [ ["infobox","introBox"],"main-display","blank",
+            ["row",[["upgrade",11],["upgrade",12],["upgrade",13]]],
+            ]
+        },
+        "里程碑": {
+            content: [ ["infobox","introBox"],"main-display","blank",
+            "milestones"
+            ]
+        },
     },
     upgrades: {
         11: {
-            title:"升级1",
-            description(){return "使熵倍增超重元素获得<br>当前：x" + format(upgradeEffect("uc",11))},
-            cost: new Decimal("1.79e308"),
+            title:"effect",
+            description(){return "基于电源倍增电能获得和上限<br>当前：x" + format(upgradeEffect("b",11))},
+            cost: new Decimal(3),
             effect(){
-                return player.points.add(1).log(10).add(1).pow(3)
+                let bas = three
+                return bas.pow(player.b.points)
+            },
+            unlocked(){
+                return hasMilestone("b",0)
+            }
+        },
+        12: {
+            title:"底数，底数！",
+            description(){return "基于电源增加元素合成器底数<br>当前：+" + format(upgradeEffect("b",12))},
+            cost: new Decimal(5),
+            effect(){
+                return player.b.points.div(5).root(3)
+            },
+            unlocked(){
+                return hasMilestone("b",0)
+            }
+        },
+        13: {
+            title:"- -）",
+            description(){return "木有"},
+            cost: new Decimal(4222222),currencyDisplayName:"电能",currencyInternalName:"electricity",currencyLayer:"b",
+            unlocked(){
+                return hasMilestone("b",0)
+            }
+        },
+    },
+    milestones: {
+        0:{
+            requirementDescription: "3电源",
+            effectDescription: "解锁一些电源升级",
+            done() { return player.b.points.gte(3) }
+        }
+    },
+    clickables: {
+        11: {
+            title: "释放电能",
+            display(){return "释放你50%的电能来获取短时对超重元素提升<br>当前：x" + format(player.b.c11eff) + "<br>剩余时间：" + format(player.b.c11time) + "s"},
+            onClick(){
+                c11time = player.b.electricity.div(2).add(1).log(2)
+                player.b.c11push = player.b.electricity.div(2)
+                player.b.electricity = player.b.electricity.div(2)
+                player.b.c11eff = player.b.c11push.add(1).pow(6.4)
+                player.b.c11time = player.b.c11push.add(1).log(2)
+            },
+            canClick(){
+                return player.b.electricity.gte(0)
             },
         },
     },
+    
     row: 1,
     
     hotkeys: [
